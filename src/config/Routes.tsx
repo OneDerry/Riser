@@ -11,6 +11,7 @@ const SchoolPaymentForm = lazy(() => import("../website/payment-form"));
 const FAQSection = lazy(() => import("../website/faq"));
 const LoginForm = lazy(() => import("../domain/auth/components/login-form"));
 const SignUpForm = lazy(() => import("../domain/auth/components/sign_up"));
+const AdmissionsInfo = lazy(() => import("../website/admissions-info"));
 
 export default function appRouter(): RouteObject[] {
   return [
@@ -63,6 +64,14 @@ export default function appRouter(): RouteObject[] {
           element: (
             <Suspense fallback={<Loading />}>
               <FAQSection />
+            </Suspense>
+          ),
+        },
+        {
+          path: "/admissions-info",
+          element: (
+            <Suspense fallback={<Loading />}>
+              <AdmissionsInfo />
             </Suspense>
           ),
         },

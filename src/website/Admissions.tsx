@@ -1,13 +1,13 @@
-
 // import Image from "next/image";
 import { motion } from "framer-motion";
 import admission from "../assets/admission/admission.jpg";
 import open from "../assets/admission/admissionOpen.jpg";
 import exam from "../assets/admission/entranceExam.jpg";
-
+import { useNavigate } from "react-router-dom";
 import { CalendarClock, FileText, GraduationCap } from "lucide-react";
 
 const Admissions = () => {
+  const navigate = useNavigate();
   return (
     <section
       id="admission"
@@ -40,11 +40,15 @@ const Admissions = () => {
           </div>
 
           <div className="mt-8 flex flex-wrap gap-4 justify-center">
-            <button className="bg-blue-800 hover:bg-blue-700 flex items-center p-2 justify-center text-white rounded-md">
+            <button
+              onClick={() => navigate("/enroll")}
+              className="bg-blue-800 hover:bg-blue-700 flex items-center p-2 justify-center text-white rounded-md"
+            >
               <FileText className="mr-2 h-4 w-4" /> Apply Now
             </button>
             <button
               //   variant="outline"
+              onClick={() => navigate("/admissions-info")}
               className="border-blue-600 text-blue-700 hover:bg-blue-50 flex items-center p-2 justify-center rounded-md"
             >
               <GraduationCap className="mr-2 h-4 w-4" /> Learn More

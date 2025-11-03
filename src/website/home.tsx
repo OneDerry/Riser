@@ -2,9 +2,9 @@ import { useEffect, useState, lazy, Suspense } from "react";
 
 import { Hero } from "./landing";
 import AboutUs from "./about-us";
-import Facilities from "./Facilities";
-import Admissions from "./Admissions";
-import ImmsersiveGallery from "./Cards";
+import Facilities from "./facilities";
+import Admissions from "./admissions";
+import ImmsersiveGallery from "./cards";
 
 const WhatOthersThink = lazy(() => import("./what-others-think"));
 
