@@ -102,11 +102,11 @@ export default function WhatOthersThink() {
         </div>
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 text-transparent bg-clip-text mb-4">
-            What Our <span className="text-primary">Clients</span> Say
+            What Our <span className="text-primary">Parents</span> Say
           </h2>
           <div className="w-24 h-1 bg-primary mx-auto mb-6 rounded-full" />
           <p className="text-slate-800 italic max-w-2xl mx-auto text-lg">
-            Discover why our clients trust us with their most important projects
+            Discover why our parents trust us with their most important projects
           </p>
         </div>
 
@@ -125,14 +125,14 @@ export default function WhatOthersThink() {
                 – our community speaks for itself.
               </blockquote>
 
-              <div className="flex items-center justify-center">
+              {/* <div className="flex items-center justify-center">
                 <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mr-4">
                   <span className="text-primary font-bold">JD</span>
                 </div>
                 <div className="text-left">
                   <div className="font-semibold text-slate-900">Jane Doe</div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import {
   CheckCircle,
@@ -70,7 +69,7 @@ const Facilities = () => {
   };
 
   return (
-    <section className="py-16 bg-gradient-to-b from-slate-50 to-slate-100  text-white">
+    <section className="py-16 bg-blue-900 transition-colors duration-300 text-white">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -80,16 +79,16 @@ const Facilities = () => {
           className="text-center mb-12 text-black"
         >
           <div className="inline-block bg-blue-100 px-4 py-1 rounded-full mb-4">
-            <span className="text-blue-800 font-medium flex items-center gap-2">
+            <span className="font-medium flex items-center gap-2">
               <HandCoins className="h-4 w-4" />
               What we offer
             </span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-serif font-bold  mb-4 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl font-serif font-bold  mb-4 transition-colors duration-300 text-white">
             School Facilities
           </h2>
           <div className="w-24 h-1 bg-primary mx-auto mb-6 rounded-full"></div>
-          <p className="text-base  max-w-2xl mx-auto text-slate-600 italic">
+          <p className="text-base  max-w-2xl mx-auto text-white italic">
             Riser is equipped with ultra-modern facilities designed to provide
             an exceptional learning environment.
           </p>
@@ -100,7 +99,7 @@ const Facilities = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-black"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           {facilities.map((facility, index) => (
             <motion.div key={index} variants={itemVariants}>
@@ -128,7 +127,7 @@ const Facilities = () => {
           viewport={{ once: true }}
           className="mt-12 text-center"
         >
-          <div className="inline-flex items-center gap-2 text-primary font-medium text-black">
+          <div className="inline-flex items-center gap-2 text-primary font-medium">
             <CheckCircle className="h-5 w-5" />
             <span>
               All facilities are regularly maintained to ensure optimal

@@ -1,4 +1,3 @@
-
 import type React from "react";
 
 import { useState } from "react";
@@ -10,8 +9,6 @@ import { formSchema } from "../app/components/validations";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import background from "../assets/schoolbuilding.jpg";
-
-
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -155,7 +152,6 @@ export default function SchoolPaymentForm() {
 
     return (
       <div className="p-4 bg-white rounded-lg shadow-lg">
-       
         <div className="flex justify-between items-center mb-4">
           <button
             type="button"
@@ -226,20 +222,20 @@ export default function SchoolPaymentForm() {
   }
 
   return (
-      <div
-        style={{ backgroundImage: `url(${background})` }}
-        className="min-h-screen bg-cover bg-no-repeat bg-center px-6 py-12
+    <div
+      style={{ backgroundImage: `url(${background})` }}
+      className="min-h-screen bg-cover bg-no-repeat bg-center px-6 py-12
       "
-      >
+    >
       <div>
         <Link
           to="/enroll"
           className="font-bold flex items-center gap-2 hover:-translate-x-2"
         >
-          <ArrowLeft/> Back to Enroll
+          <ArrowLeft /> Back to Enroll
         </Link>
       </div>
-      <div className="bg-white w-[60%] mx-auto rounded-lg shadow-lg overflow-hidden">
+      <div className="bg-white w-[90%] sm:w-[60%] mx-auto rounded-lg shadow-lg overflow-hidden">
         <div className="bg-slate-50 border-b px-6 py-4">
           <h2 className="text-2xl font-bold text-gray-800">
             School Fee Payment & Enrollment
