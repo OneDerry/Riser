@@ -1,7 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 
 import { cn } from "../../lib/utils";
-("use client");
 
 import * as React from "react";
 import * as LabelPrimitive from "@radix-ui/react-label";
