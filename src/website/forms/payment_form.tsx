@@ -13,16 +13,16 @@ import {
   FormMessage,
   Input,
   Textarea,
-} from "../ui/common";
+} from "../../shared/common";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 
-import background from "../assets/school_building.jpg";
-import { formSchema, type FormValues } from "../app/components/validations";
-import { usePaystackCheckout } from "../paystack/use_paystack_checkout";
-import { useSubmitEnrollmentMutation } from "../app/features/payments.api";
-import { EnrollmentData } from "../app/services/sheet_db.service";
+import background from "../../assets/school_building.jpg";
+import { formSchema, type FormValues } from "./validations";
+import { usePaystackCheckout } from "../../paystack/use_paystack_checkout";
+import { useSubmitEnrollmentMutation } from "../../app/features/payments.api";
+import { EnrollmentData } from "../../app/services/sheet_db_service";
 
 const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || "";
 
@@ -46,7 +46,7 @@ export default function SchoolPaymentForm() {
       studentGender: "",
       gradeLevel: "",
       academicYear: "",
-      semester: "",
+      term: "",
       feeType: "",
       additionalInfo: "",
     },
@@ -117,7 +117,7 @@ export default function SchoolPaymentForm() {
       studentGender: data.studentGender,
       gradeLevel: data.gradeLevel,
       academicYear: data.academicYear,
-      semester: data.semester,
+      term: data.term,
       feeType: data.feeType,
       amount: paymentAmount,
       paymentMethod: "paystack",
@@ -417,18 +417,21 @@ export default function SchoolPaymentForm() {
                             <option value="">Select grade</option>
                             {[
                               "Kindergarten",
-                              "Grade 1",
-                              "Grade 2",
-                              "Grade 3",
-                              "Grade 4",
-                              "Grade 5",
-                              "Grade 6",
-                              "Grade 7",
-                              "Grade 8",
-                              "Grade 9",
-                              "Grade 10",
-                              "Grade 11",
-                              "Grade 12",
+                              "Nursery 1",
+                              "Nursery 2",
+                              "Nursery 3",
+                              "Primary 1",
+                              "Primary 2",
+                              "Primary 3",
+                              "Primary 4",
+                              "Primary 5",
+                              "Primary 6",
+                              "JSS1",
+                              "JSS2",
+                              "JSS3",
+                              "SS1",
+                              "SS2",
+                              "SS3",
                             ].map((g) => (
                               <option key={g} value={g}>
                                 {g}
@@ -453,13 +456,11 @@ export default function SchoolPaymentForm() {
                             className="w-full rounded-md border px-3 py-2 text-sm"
                           >
                             <option value="">Select year</option>
-                            {["2023-2024", "2024-2025", "2025-2026"].map(
-                              (y) => (
-                                <option key={y} value={y}>
-                                  {y}
-                                </option>
-                              )
-                            )}
+                            {["2025-2026", "2026-2027"].map((y) => (
+                              <option key={y} value={y}>
+                                {y}
+                              </option>
+                            ))}
                           </select>
                         </FormControl>
                         <FormMessage />
@@ -469,25 +470,25 @@ export default function SchoolPaymentForm() {
 
                   <FormField
                     control={control}
-                    name="semester"
+                    name="term"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Semester *</FormLabel>
+                        <FormLabel>
+                          Term <small className="text-background">*</small>
+                        </FormLabel>
                         <FormControl>
                           <select
                             {...field}
                             className="w-full rounded-md border px-3 py-2 text-sm"
                           >
-                            <option value="">Select semester</option>
-                            {[
-                              "First Semester",
-                              "Second Semester",
-                              "Summer Term",
-                            ].map((s) => (
-                              <option key={s} value={s}>
-                                {s}
-                              </option>
-                            ))}
+                            <option value="">Select term</option>
+                            {["First term", "Second term", "Third Term"].map(
+                              (s) => (
+                                <option key={s} value={s}>
+                                  {s}
+                                </option>
+                              )
+                            )}
                           </select>
                         </FormControl>
                         <FormMessage />

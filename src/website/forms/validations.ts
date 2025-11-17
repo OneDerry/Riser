@@ -1,4 +1,3 @@
-
 import { z } from "zod";
 
 export const formSchema = z.object({
@@ -29,7 +28,7 @@ export const formSchema = z.object({
   // Enrollment Information
   gradeLevel: z.string({ required_error: "Please select a grade level" }),
   academicYear: z.string({ required_error: "Please select an academic year" }),
-  semester: z.string({ required_error: "Please select a semester" }),
+  term: z.string({ required_error: "Please select a term" }),
 
   // Payment Information
   feeType: z.string({ required_error: "Please select a fee type" }),

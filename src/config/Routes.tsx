@@ -2,10 +2,10 @@
 import { lazy, Suspense } from "react";
 import { RouteObject } from "react-router-dom";
 
-import Baselayout from "../app_layout/base_layout";
-import { Loading } from "../ui/components/loaders";
+import Baselayout from "../shared/layout/base_layout";
+import { Loading } from "../shared/components/loaders";
 import PaystackPayment from "../paystack/paystack_payment";
-import SchoolPaymentForm from "../website/payment_form";
+import SchoolPaymentForm from "../website/forms/payment_form";
 
 const Home = lazy(() => import("../website/home"));
 const EnrollmentPage = lazy(() => import("../website/enroll_page"));
@@ -76,6 +76,5 @@ export default function appRouter(): RouteObject[] {
         // },
       ],
     },
-   
   ];
 }

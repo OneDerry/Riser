@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePaystackPayment } from "react-paystack";
 
 import { v4 as uuidv4 } from "uuid";
-import { convertToKobo } from "../app/services/paystack.service";
+import { convertToKobo } from "../app/services/paystack_service";
 
 export interface PaystackSuccessResponse {
   reference: string;

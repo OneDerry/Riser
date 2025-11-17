@@ -1,9 +1,8 @@
 import { Outlet } from "react-router-dom";
 import { lazy, Suspense } from "react";
 
-
-import Footer from "../website/footer";
-const Navbar = lazy(() => import("../website/navbar"));
+import Footer from "../../website/footer";
+const Navbar = lazy(() => import("../../website/navbar"));
 
 const ComponentLoader = () => (
   <div className="flex items-center justify-center py-4">

@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-import { Card } from "../ui/card";
+import { Card } from "../shared/card";
 import {
   CheckCircle,
   FlaskRoundIcon as Flask,

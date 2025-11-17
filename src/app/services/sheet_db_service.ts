@@ -1,7 +1,9 @@
 // SheetDB Service
 // This service handles saving data to SheetDB
 
-const SHEETDB_API_URL = import.meta.env.VITE_SHEETDB_API_URL || "https://sheetdb.io/api/v1/ll7yrru73p0vm";
+const SHEETDB_API_URL =
+  import.meta.env.VITE_SHEETDB_API_URL ||
+  "https://sheetdb.io/api/v1/ll7yrru73p0vm";
 
 export interface EnrollmentData {
   // Parent Information
@@ -9,42 +11,46 @@ export interface EnrollmentData {
   parentLastName: string;
   parentEmail: string;
   parentPhone: string;
-  
+
   // Student Information
   studentFirstName: string;
   studentLastName: string;
   studentDob: string; // ISO date string
   studentGender: string;
-  
+
   // Enrollment Information
   gradeLevel: string;
   academicYear: string;
-  semester: string;
-  
+  term: string;
+
   // Payment Information
   feeType: string;
   paymentMethod: string;
   amount: number;
   paymentReference?: string;
   paymentStatus?: string;
-  
+
   // Additional Information
   additionalInfo?: string;
-  
+
   // Timestamps
   createdAt?: string;
   updatedAt?: string;
 }
 
 // Save enrollment data to SheetDB
-export const saveToSheetDB = async (data: EnrollmentData): Promise<{ success: boolean; message: string }> => {
+export const saveToSheetDB = async (
+  data: EnrollmentData
+): Promise<{ success: boolean; message: string }> => {
   try {
     // Add timestamps
     const dataWithTimestamps = {
       ...data,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      paymentStatus: data.paymentStatus || (data.paymentMethod === "bank-transfer" ? "pending" : "pending"),
+      paymentStatus:
+        data.paymentStatus ||
+        (data.paymentMethod === "bank-transfer" ? "pending" : "pending"),
     };
 
     const response = await fetch(SHEETDB_API_URL, {
@@ -64,7 +70,7 @@ export const saveToSheetDB = async (data: EnrollmentData): Promise<{ success: bo
     }
 
     const result = await response.json();
-    
+
     if (result.created === 1 || result.created > 0) {
       return {
         success: true,
@@ -77,7 +83,8 @@ export const saveToSheetDB = async (data: EnrollmentData): Promise<{ success: bo
     console.error("Error saving to SheetDB:", error);
     return {
       success: false,
-      message: error instanceof Error ? error.message : "Unknown error occurred",
+      message:
+        error instanceof Error ? error.message : "Unknown error occurred",
     };
   }
 };
@@ -90,18 +97,21 @@ export const updateSheetDB = async (
   try {
     // SheetDB update requires finding the record first
     // For now, we'll use PATCH to update by payment reference
-    const response = await fetch(`${SHEETDB_API_URL}/paymentReference/${reference}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        data: {
-          ...updates,
-          updatedAt: new Date().toISOString(),
+    const response = await fetch(
+      `${SHEETDB_API_URL}/paymentReference/${reference}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
         },
-      }),
-    });
+        body: JSON.stringify({
+          data: {
+            ...updates,
+            updatedAt: new Date().toISOString(),
+          },
+        }),
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`Failed to update data: ${response.statusText}`);
@@ -115,8 +125,8 @@ export const updateSheetDB = async (
     console.error("Error updating SheetDB:", error);
     return {
       success: false,
-      message: error instanceof Error ? error.message : "Unknown error occurred",
+      message:
+        error instanceof Error ? error.message : "Unknown error occurred",
     };
   }
 };
-
