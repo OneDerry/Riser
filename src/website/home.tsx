@@ -1,18 +1,11 @@
-import { useEffect, useState, lazy, Suspense } from "react";
-
+import { useEffect, useState } from "react";
 
 import { Hero } from "./landing";
 import AboutUs from "./about_us";
 import Facilities from "./facilities";
 import Admissions from "./admissions";
 import ImmsersiveGallery from "./cards";
-const WhatOthersThink = lazy(() => import("./what_others_think"));
-
-const SectionLoader = () => (
-  <div className="flex items-center justify-center py-20">
-    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-  </div>
-);
+import WhatOthersThink from "./what_others_think";
 
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
@@ -33,25 +26,14 @@ export default function Home() {
     <main id="main">
       <Hero />
 
-      <Suspense fallback={<SectionLoader />}>
-        <AboutUs />
-      </Suspense>
+      <AboutUs />
+      <Facilities />
 
-      <Suspense fallback={<SectionLoader />}>
-        <Facilities />
-      </Suspense>
+      <Admissions />
 
-      <Suspense fallback={<SectionLoader />}>
-        <Admissions />
-      </Suspense>
+      <ImmsersiveGallery />
 
-      <Suspense fallback={<SectionLoader />}>
-        <ImmsersiveGallery />
-      </Suspense>
-
-      <Suspense fallback={<SectionLoader />}>
-        <WhatOthersThink />
-      </Suspense>
+      <WhatOthersThink />
     </main>
   );
 }
