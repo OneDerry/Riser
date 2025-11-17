@@ -6,9 +6,9 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { Toaster } from "sonner";
 
 import "./index.css";
-import { store } from "./redux/store";
 import ErrorBoundary from "./shared/components/error_boundary";
 import appRouter from "./config/routes";
+import { store } from "./app/store";
 const routes = createBrowserRouter(appRouter());
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
