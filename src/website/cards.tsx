@@ -26,7 +26,6 @@ import independence from "../assets/interior/Independence.jpg";
 
 import { cn } from "../lib/utils";
 
-
 interface GalleryItem {
   id: number;
   name: string;
