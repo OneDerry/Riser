@@ -4,6 +4,7 @@ import { RouteObject } from "react-router-dom";
 import Baselayout from "../app_layout/baseLayout";
 import Applayout from "../app_layout/Applayout";
 import { Loading } from "../ui/components/loaders";
+import PaystackPayment from "../paystack/paystack_payment";
 
 const Home = lazy(() => import("../website/home"));
 const EnrollmentPage = lazy(() => import("../website/enrollPage"));
@@ -75,6 +76,10 @@ export default function appRouter(): RouteObject[] {
             </Suspense>
           ),
         },
+        {
+          path: "/paystack_payment",
+          Component: PaystackPayment,
+        }
       ],
     },
     {
