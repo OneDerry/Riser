@@ -7,7 +7,7 @@ import { Toaster } from "sonner";
 
 import "./index.css";
 import ErrorBoundary from "./shared/components/error_boundary";
-import appRouter from "./config/routes";
+import appRouter from "../src/config/routes";
 import { store } from "./app/store";
 const routes = createBrowserRouter(appRouter());
 ReactDOM.createRoot(document.getElementById("root")!).render(
