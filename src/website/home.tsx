@@ -25,14 +25,10 @@ export default function Home() {
   return (
     <main id="main">
       <Hero />
-
       <AboutUs />
       <Facilities />
-
       <Admissions />
-
       <ImmsersiveGallery />
-
       <WhatOthersThink />
     </main>
   );
