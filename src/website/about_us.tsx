@@ -1,7 +1,6 @@
-
 import { motion } from "framer-motion";
 
-import Image from "../assets/schoolbuilding.jpg";
+import Image from "../assets/school_building.jpg";
 import proprietor from "../assets/proprietor.jpg";
 const AboutUs = () => {
   return (

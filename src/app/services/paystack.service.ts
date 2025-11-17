@@ -1,6 +1,4 @@
-// Paystack Payment Service
-// This service handles Paystack payment initialization
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface PaystackPaymentData {
   email: string;
   amount: number; // Amount in kobo (lowest currency unit)
@@ -55,4 +53,3 @@ export const generatePaymentReference = (): string => {
 export const convertToKobo = (amount: number): number => {
   return Math.round(amount * 100);
 };
-

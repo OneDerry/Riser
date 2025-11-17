@@ -1,7 +1,7 @@
 import {
   usePaystackCheckout,
   type PaystackSuccessResponse,
-} from "./usePaystackCheckout";
+} from "./use_paystack_checkout";
 
 const PaystackPayment = () => {
   const { initializePayment, isReady } = usePaystackCheckout({

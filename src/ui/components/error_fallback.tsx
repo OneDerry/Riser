@@ -1,4 +1,3 @@
-
 type Props = {
   title?: string;
   message?: string;
@@ -17,11 +16,7 @@ export default function ErrorFallback({
         <p className="mb-6 text-sm text-gray-600">{message}</p>
         <div className="flex items-center justify-center gap-3">
           <button onClick={() => window.location.reload()}>Reload</button>
-          {reset && (
-            <button  onClick={reset}>
-              Try again
-            </button>
-          )}
+          {reset && <button onClick={reset}>Try again</button>}
         </div>
       </div>
     </div>

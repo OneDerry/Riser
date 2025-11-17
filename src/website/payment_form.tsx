@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 
 import {
   Button,
+  Calendar,
   Form,
   FormControl,
   FormField,
@@ -12,21 +13,22 @@ import {
   FormLabel,
   FormMessage,
   Input,
+  Textarea,
 } from "../ui/common";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 
-import background from "../assets/schoolbuilding.jpg";
-import { Textarea } from "../app/userint/textarea";
+import background from "../assets/school_building.jpg";
 import { formSchema, type FormValues } from "../app/components/validations";
-import { generatePaymentReference } from "../app/services/paystackService";
-import { usePaystackCheckout } from "../paystack/usePaystackCheckout";
-import { useSubmitEnrollmentMutation } from "../app/features/paymentsapi";
-import { EnrollmentData } from "../app/services/sheetDBService";
+import { generatePaymentReference } from "../app/services/paystack.service";
+import { usePaystackCheckout } from "../paystack/use_paystack_checkout";
+import { useSubmitEnrollmentMutation } from "../app/features/payments.api";
+import { EnrollmentData } from "../app/services/sheet_db.service";
 
 const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || "";
 
 export default function SchoolPaymentForm() {
+  const [date, setDate] = useState<Date | undefined>(new Date());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -223,79 +225,6 @@ export default function SchoolPaymentForm() {
 
     setErrorMessage("Please select a payment method.");
     setIsSubmitting(false);
-  };
-
-  const SimpleCalendar = ({
-    onSelectDate,
-  }: {
-    onSelectDate: (date: Date) => void;
-  }) => {
-    const [currentMonth, setCurrentMonth] = useState(new Date());
-
-    const getDaysInMonth = (year: number, month: number) =>
-      new Date(year, month + 1, 0).getDate();
-
-    const getFirstDayOfMonth = (year: number, month: number) =>
-      new Date(year, month, 1).getDay();
-
-    const year = currentMonth.getFullYear();
-    const month = currentMonth.getMonth();
-    const daysInMonth = getDaysInMonth(year, month);
-    const firstDayOfMonth = getFirstDayOfMonth(year, month);
-
-    const days = [];
-    for (let i = 0; i < firstDayOfMonth; i++) {
-      days.push(<div key={`empty-${i}`} className="h-8 w-8" />);
-    }
-
-    for (let i = 1; i <= daysInMonth; i++) {
-      const date = new Date(year, month, i);
-      days.push(
-        <button
-          key={i}
-          type="button"
-          onClick={() => onSelectDate(date)}
-          className="h-8 w-8 rounded-full hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          {i}
-        </button>
-      );
-    }
-
-    const prevMonth = () => setCurrentMonth(new Date(year, month - 1, 1));
-    const nextMonth = () => setCurrentMonth(new Date(year, month + 1, 1));
-
-    return (
-      <div className="rounded-lg bg-white p-4 shadow-lg">
-        <div className="mb-4 flex items-center justify-between">
-          <button
-            type="button"
-            onClick={prevMonth}
-            className="rounded p-1 hover:bg-gray-200"
-          >
-            &lt;
-          </button>
-          <div>{format(currentMonth, "MMMM yyyy")}</div>
-          <button
-            type="button"
-            onClick={nextMonth}
-            className="rounded p-1 hover:bg-gray-200"
-          >
-            &gt;
-          </button>
-        </div>
-        <div className="grid grid-cols-7 gap-1 text-center">
-          <div className="flex h-8 items-center justify-center">Su</div>
-          <div className="flex h-8 items-center justify-center">Mo</div>
-          <div className="flex h-8 items-center justify-center">Tu</div>
-          <div className="flex h-8 items-center justify-center">We</div>
-          <div className="flex h-8 items-center justify-center">Th</div>
-          <div className="flex h-8 items-center justify-center">Fr</div>
-          <div className="flex h-8 items-center justify-center">Sa</div>
-          {days}
-        </div>
-      </div>
-    );
   };
 
   if (isSuccess) {
@@ -526,11 +455,17 @@ export default function SchoolPaymentForm() {
                             />
                             {showCalendar && (
                               <div className="absolute z-10 mt-1">
-                                <SimpleCalendar
-                                  onSelectDate={(date) => {
-                                    field.onChange(date);
-                                    setShowCalendar(false);
-                                  }}
+                                <Calendar
+                                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                  // onSelectDate={(date: any) => {
+                                  //   field.onChange(date);
+                                  //   setShowCalendar(false);
+                                  // }}
+                                  mode="single"
+                                  selected={date}
+                                  onSelect={setDate}
+                                  className="rounded-md border shadow-sm"
+                                  captionLayout="dropdown"
                                 />
                               </div>
                             )}

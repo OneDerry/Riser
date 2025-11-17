@@ -5,8 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { FaEye } from "react-icons/fa6";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 
-
-import logo from "../assets/logoMain.png"
+import logo from "../assets/logoMain.png";
 // import { RiEyeCloseLine } from "react-icons/ri";
 
 const signInValidationSchema = Yup.object().shape({

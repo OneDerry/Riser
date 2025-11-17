@@ -1,9 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 
-
 import classes from "../assets/interior/classes.jpg";
-import buildings from "../assets/schoolbuilding.jpg";
+import buildings from "../assets/school_building.jpg";
 import complete from "../assets/interior/complete.jpg";
 import library from "../assets/interior/library.jpg";
 import lab from "../assets/interior/lab.jpg";
@@ -25,7 +24,6 @@ import {
   ExternalLink,
   Binoculars,
 } from "lucide-react";
-
 
 interface GalleryItem {
   id: number;

@@ -2,11 +2,11 @@ import { useEffect, useState, lazy, Suspense } from "react";
 
 
 import { Hero } from "./landing";
-import AboutUs from "./about-us";
+import AboutUs from "./about_us";
 import Facilities from "./facilities";
 import Admissions from "./admissions";
 import ImmsersiveGallery from "./cards";
-const WhatOthersThink = lazy(() => import("./what-others-think"));
+const WhatOthersThink = lazy(() => import("./what_others_think"));
 
 const SectionLoader = () => (
   <div className="flex items-center justify-center py-20">

@@ -4,15 +4,8 @@ import { CalendarClock, FileText, GraduationCap } from "lucide-react";
 import { motion } from "framer-motion";
 
 import admission from "../assets/admission/admission.jpg";
-import open from "../assets/admission/admissionOpen.jpg";
-import exam from "../assets/admission/entranceExam.jpg";
-// import Image from "next/image";
-
-
-
-
-
-
+import open from "../assets/admission/admission_open.jpg";
+import exam from "../assets/admission/entrance_exam.jpg";
 
 const Admissions = () => {
   const navigate = useNavigate();

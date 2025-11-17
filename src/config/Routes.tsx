@@ -1,28 +1,16 @@
+/* eslint-disable react-refresh/only-export-components */
 import { lazy, Suspense } from "react";
 import { RouteObject } from "react-router-dom";
 
-
-import Baselayout from "../app_layout/baseLayout";
-import Applayout from "../app_layout/Applayout";
+import Baselayout from "../app_layout/base_layout";
 import { Loading } from "../ui/components/loaders";
 import PaystackPayment from "../paystack/paystack_payment";
-import SchoolPaymentForm from "../website/payment-form";
-/* eslint-disable react-refresh/only-export-components */
-
-
-
-
-
-
-
+import SchoolPaymentForm from "../website/payment_form";
 
 const Home = lazy(() => import("../website/home"));
-const EnrollmentPage = lazy(() => import("../website/enrollPage"));
-// const SchoolPaymentForm = lazy(() => import("../website/payment-form"));
+const EnrollmentPage = lazy(() => import("../website/enroll_page"));
 const FAQSection = lazy(() => import("../website/faq"));
-const LoginForm = lazy(() => import("../domain/auth/components/login-form"));
-const SignUpForm = lazy(() => import("../domain/auth/components/sign_up"));
-const AdmissionsInfo = lazy(() => import("../website/admissions-info"));
+const AdmissionsInfo = lazy(() => import("../website/admissions_info"));
 
 export default function appRouter(): RouteObject[] {
   return [
@@ -51,22 +39,6 @@ export default function appRouter(): RouteObject[] {
           element: <SchoolPaymentForm />,
         },
         {
-          path: "/login",
-          element: (
-            <Suspense fallback={<Loading />}>
-              <LoginForm />
-            </Suspense>
-          ),
-        },
-        {
-          path: "/signup",
-          element: (
-            <Suspense fallback={<Loading />}>
-              <SignUpForm />
-            </Suspense>
-          ),
-        },
-        {
           path: "/faq",
           element: (
             <Suspense fallback={<Loading />}>
@@ -86,12 +58,24 @@ export default function appRouter(): RouteObject[] {
           path: "/paystack_payment",
           Component: PaystackPayment,
         },
+        // {
+        //   path: "/login",
+        //   element: (
+        //     <Suspense fallback={<Loading />}>
+        //       <LoginForm />
+        //     </Suspense>
+        //   ),
+        // },
+        // {
+        //   path: "/signup",
+        //   element: (
+        //     <Suspense fallback={<Loading />}>
+        //       <SignUpForm />
+        //     </Suspense>
+        //   ),
+        // },
       ],
     },
-    {
-      path: "admin",
-      element: <Applayout />,
-      children: [],
-    },
+   
   ];
 }

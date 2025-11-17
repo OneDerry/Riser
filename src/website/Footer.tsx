@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
-import logoSrc from "../assets/logoMain.png";
+import logoSrc from "../assets/logo_main.png";
 import {
   Mail,
   Phone,
@@ -15,12 +15,6 @@ import {
   Instagram,
   Linkedin,
 } from "lucide-react";
-
-
-
-
-
-
 
 const Footer = () => {
   const [email, setEmail] = useState("");

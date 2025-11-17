@@ -1,6 +1,5 @@
 import React from "react";
 
-
 import ErrorFallback from "./error_fallback";
 type State = { hasError: boolean };
 

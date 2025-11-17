@@ -2,7 +2,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { RootState } from "../store";
-import { BaseUser } from "../models/authModel";
+import { BaseUser } from "../models/auth_model";
 // import { FullUser } from "../models/authModel";
 
 // Only keep user and forgotPasswordStep in state
