@@ -8,7 +8,7 @@ import { Toaster } from "sonner";
 import "./index.css";
 import { store } from "./redux/store";
 import ErrorBoundary from "./ui/components/error_boundary";
-import appRouter from "./config/Routes";
+import appRouter from "./config/routes";
 const routes = createBrowserRouter(appRouter());
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
