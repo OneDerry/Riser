@@ -1,11 +1,10 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-
 import { ArrowRight, ChevronDown } from "lucide-react";
+
+import { motion } from "framer-motion";
 
 import backgroundImage from "../assets/background.jpg";
 import Navbar from "./navbar";
-
 export const Hero = () => {
   const scrollToContent = () => {
     const contentSection = document.getElementById("content-section");

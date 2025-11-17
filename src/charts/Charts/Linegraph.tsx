@@ -1,8 +1,9 @@
+
+
 import { Linedata } from "../Data/Linedata";
 import { Bardata } from "../Data/Bardata";
 import { Areadata } from "../Data/Areadata";
 import { Basedata } from "../Data/Basedata";
-
 type Linedataprops = {
   title: string;
   children?: React.ReactNode;

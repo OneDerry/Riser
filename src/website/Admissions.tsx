@@ -1,10 +1,18 @@
-// import Image from "next/image";
+import { useNavigate } from "react-router-dom";
+import { CalendarClock, FileText, GraduationCap } from "lucide-react";
+
 import { motion } from "framer-motion";
+
 import admission from "../assets/admission/admission.jpg";
 import open from "../assets/admission/admissionOpen.jpg";
 import exam from "../assets/admission/entranceExam.jpg";
-import { useNavigate } from "react-router-dom";
-import { CalendarClock, FileText, GraduationCap } from "lucide-react";
+// import Image from "next/image";
+
+
+
+
+
+
 
 const Admissions = () => {
   const navigate = useNavigate();

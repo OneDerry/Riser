@@ -1,7 +1,8 @@
-import Linegraph from "../../charts/Charts/Linegraph";
 import { TbLayoutDashboard } from "react-icons/tb";
 import { useEffect, useState } from "react";
 
+
+import Linegraph from "../../charts/Charts/Linegraph";
 export default function Dbdisplay() {
   const counts = [
     {

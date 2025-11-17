@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { cn } from "../lib/utils";
 import { Link } from "react-router-dom";
-import logo from "../assets/logoMain.png";
 
+import { motion } from "framer-motion";
+
+import { cn } from "../lib/utils";
+import logo from "../assets/logoMain.png";
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);

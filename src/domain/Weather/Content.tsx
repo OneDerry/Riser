@@ -1,5 +1,6 @@
-import axios from "axios";
 import { useState } from "react";
+
+import axios from "axios";
 
 interface WeatherData {
   name: string;

@@ -1,6 +1,7 @@
 import React from "react";
-import ErrorFallback from "./error_fallback";
 
+
+import ErrorFallback from "./error_fallback";
 type State = { hasError: boolean };
 
 export default class ErrorBoundary extends React.Component<

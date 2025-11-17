@@ -1,9 +1,9 @@
-import { configureStore, ConfigureStoreOptions } from "@reduxjs/toolkit";
 import { useDispatch, TypedUseSelectorHook, useSelector } from "react-redux";
+
+import { configureStore, ConfigureStoreOptions } from "@reduxjs/toolkit";
+
 import authReducer from "./features/authSlice";
 import { api } from "./api";
-
-
 export const createStore = (
   options?: ConfigureStoreOptions["preloadedState"] | undefined
 ) =>

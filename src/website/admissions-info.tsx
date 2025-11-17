@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import background from "../assets/schoolbuilding.jpg";
 
+
+import background from "../assets/schoolbuilding.jpg";
 export default function AdmissionsInfo() {
   return (
     <div

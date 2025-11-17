@@ -1,8 +1,8 @@
 
-import Image from "../assets/schoolbuilding.jpg";
 import { motion } from "framer-motion";
-import proprietor from "../assets/proprietor.jpg";
 
+import Image from "../assets/schoolbuilding.jpg";
+import proprietor from "../assets/proprietor.jpg";
 const AboutUs = () => {
   return (
     <div className="p-4">

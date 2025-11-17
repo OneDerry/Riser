@@ -1,8 +1,12 @@
-
 import type React from "react";
-
 import { useState } from "react";
+import { FaXTwitter } from "react-icons/fa6";
+import { Link } from "react-router-dom";
+
 import { motion } from "framer-motion";
+import { toast } from "sonner";
+
+import logoSrc from "../assets/logoMain.png";
 import {
   Mail,
   Phone,
@@ -11,12 +15,12 @@ import {
   Instagram,
   Linkedin,
 } from "lucide-react";
-import { FaXTwitter } from "react-icons/fa6";
 
-import { Link } from "react-router-dom";
-import { toast } from "sonner";
 
-import logoSrc from "../assets/logoMain.png";
+
+
+
+
 
 const Footer = () => {
   const [email, setEmail] = useState("");

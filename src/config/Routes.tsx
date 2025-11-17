@@ -1,14 +1,24 @@
-/* eslint-disable react-refresh/only-export-components */
 import { lazy, Suspense } from "react";
 import { RouteObject } from "react-router-dom";
+
+
 import Baselayout from "../app_layout/baseLayout";
 import Applayout from "../app_layout/Applayout";
 import { Loading } from "../ui/components/loaders";
 import PaystackPayment from "../paystack/paystack_payment";
+import SchoolPaymentForm from "../website/payment-form";
+/* eslint-disable react-refresh/only-export-components */
+
+
+
+
+
+
+
 
 const Home = lazy(() => import("../website/home"));
 const EnrollmentPage = lazy(() => import("../website/enrollPage"));
-const SchoolPaymentForm = lazy(() => import("../website/payment-form"));
+// const SchoolPaymentForm = lazy(() => import("../website/payment-form"));
 const FAQSection = lazy(() => import("../website/faq"));
 const LoginForm = lazy(() => import("../domain/auth/components/login-form"));
 const SignUpForm = lazy(() => import("../domain/auth/components/sign_up"));
@@ -38,11 +48,7 @@ export default function appRouter(): RouteObject[] {
         },
         {
           path: "/form",
-          element: (
-            <Suspense fallback={<Loading />}>
-              <SchoolPaymentForm />
-            </Suspense>
-          ),
+          element: <SchoolPaymentForm />,
         },
         {
           path: "/login",
@@ -79,7 +85,7 @@ export default function appRouter(): RouteObject[] {
         {
           path: "/paystack_payment",
           Component: PaystackPayment,
-        }
+        },
       ],
     },
     {

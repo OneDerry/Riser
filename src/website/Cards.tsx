@@ -1,10 +1,14 @@
 import { useState, useRef, useEffect } from "react";
+import { useInView } from "react-intersection-observer";
+
+
 import classes from "../assets/interior/classes.jpg";
 import buildings from "../assets/schoolbuilding.jpg";
 import complete from "../assets/interior/complete.jpg";
 import library from "../assets/interior/library.jpg";
 import lab from "../assets/interior/lab.jpg";
 import independence from "../assets/interior/Independence.jpg";
+import { cn } from "../lib/utils";
 import {
   motion,
   AnimatePresence,
@@ -13,7 +17,7 @@ import {
   useSpring,
   useMotionValue,
 } from "framer-motion";
-import { useInView } from "react-intersection-observer";
+
 import {
   ChevronRight,
   X,
@@ -21,7 +25,7 @@ import {
   ExternalLink,
   Binoculars,
 } from "lucide-react";
-import { cn } from "../lib/utils";
+
 
 interface GalleryItem {
   id: number;

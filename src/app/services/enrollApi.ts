@@ -1,6 +1,7 @@
+
+
 import { api } from "../api";
 import { EnrollResponse } from "../models/models";
-
 export const enrollApi = api.injectEndpoints({
   endpoints: (build) => ({
     postEnroll: build.mutation<EnrollResponse, { payload: FormData }>({

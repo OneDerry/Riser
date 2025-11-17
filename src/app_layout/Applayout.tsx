@@ -1,10 +1,9 @@
 import { Outlet } from "react-router-dom";
-
-import Sidenav from "./Sidenav";
-import Dbnav from "./Dbnav";
 import { ReactNode } from "react";
 
 
+import Sidenav from "./Sidenav";
+import Dbnav from "./Dbnav";
 type ApplayoutProps = {
   children?: ReactNode;
 };

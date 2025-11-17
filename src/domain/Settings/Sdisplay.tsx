@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { FaToggleOn, FaToggleOff } from "react-icons/fa";
 import { ImBin } from "react-icons/im";
+
+
 import Accordion from "./Accordion";
 import Table from "./table";
-
 export default function Sdisplay() {
   const [isRebillToggled, setIsRebillToggled] = useState(false);
   const [isSoundsToggled, setIsSoundsToggled] = useState(false);

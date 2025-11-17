@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { ArrowUp, CheckCircle, Users, Briefcase, Heart } from "lucide-react";
+
+
 // import { cn } from "@/lib/utils";
 
 export default function WhatOthersThink() {

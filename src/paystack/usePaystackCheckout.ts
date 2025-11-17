@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import { usePaystackPayment } from "react-paystack";
-import { convertToKobo } from "../app/services/paystackService";
 
+import { v4 as uuidv4 } from "uuid";
+
+import { convertToKobo } from "../app/services/paystackService";
 export interface PaystackSuccessResponse {
   reference: string;
   status: string;
@@ -39,9 +40,9 @@ const normalizeMetadata = (
     Object.entries(metadata)
       .filter(([, value]) => value !== undefined && value !== "")
       .map(([key, value]) => ({
-        display_name: key.replace(/_/g, " ").replace(/\b\w/g, (char) =>
-          char.toUpperCase()
-        ),
+        display_name: key
+          .replace(/_/g, " ")
+          .replace(/\b\w/g, (char) => char.toUpperCase()),
         variable_name: key,
         value: String(value),
       })) || [];
@@ -134,4 +135,3 @@ export const usePaystackCheckout = ({
     config,
   };
 };
-

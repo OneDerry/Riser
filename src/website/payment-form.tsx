@@ -1,17 +1,8 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import background from "../assets/schoolbuilding.jpg";
 
-import { Textarea } from "../app/userint/textarea";
-import { formSchema, type FormValues } from "../app/components/validations";
-import { useSubmitEnrollmentMutation } from "../app/features/paymentsApi";
-import type { EnrollmentData } from "../app/services/sheetDBService";
-import { generatePaymentReference } from "../app/services/paystackService";
-import { usePaystackCheckout } from "../paystack/usePaystackCheckout";
 import {
   Button,
   Form,
@@ -22,6 +13,16 @@ import {
   FormMessage,
   Input,
 } from "../ui/common";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
+
+import background from "../assets/schoolbuilding.jpg";
+import { Textarea } from "../app/userint/textarea";
+import { formSchema, type FormValues } from "../app/components/validations";
+import { generatePaymentReference } from "../app/services/paystackService";
+import { usePaystackCheckout } from "../paystack/usePaystackCheckout";
+import { useSubmitEnrollmentMutation } from "../app/features/paymentsapi";
+import { EnrollmentData } from "../app/services/sheetDBService";
 
 const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || "";
 

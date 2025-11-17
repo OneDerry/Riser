@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 
+
 type FAQItem = {
   question: string;
   answer: string;
