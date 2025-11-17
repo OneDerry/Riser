@@ -53,7 +53,7 @@ export default function SchoolPaymentForm() {
       academicYear: "",
       semester: "",
       feeType: "",
-      paymentMethod: "",
+      // paymentMethod: "",
       additionalInfo: "",
       cardholderName: "",
       cardNumber: "",
@@ -66,7 +66,7 @@ export default function SchoolPaymentForm() {
   const [submitEnrollment] = useSubmitEnrollmentMutation();
 
   const feeType = watch("feeType");
-  const paymentMethod = watch("paymentMethod");
+  // const paymentMethod = watch("paymentMethod");
   const parentFirstName = watch("parentFirstName");
   const parentLastName = watch("parentLastName");
   const parentEmail = watch("parentEmail");
@@ -630,7 +630,7 @@ export default function SchoolPaymentForm() {
                     )}
                   />
 
-                  <FormField
+                  {/* <FormField
                     control={control}
                     name="paymentMethod"
                     render={({ field }) => (
@@ -802,7 +802,7 @@ export default function SchoolPaymentForm() {
                         />
                       </div>
                     </div>
-                  )}
+                  )} */}
                 </div>
               </section>
 
