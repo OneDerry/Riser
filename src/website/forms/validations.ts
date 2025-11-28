@@ -32,13 +32,6 @@ export const formSchema = z.object({
 
   // Payment Information
   feeType: z.string({ required_error: "Please select a fee type" }),
-  paymentMethod: z.string({ required_error: "Please select a payment method" }),
-
-  // Credit Card Information (conditionally required)
-  cardholderName: z.string().optional(),
-  cardNumber: z.string().optional(),
-  expiryDate: z.string().optional(),
-  cvv: z.string().optional(),
 
   // Additional Information
   additionalInfo: z.string().optional(),

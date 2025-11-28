@@ -1,4 +1,3 @@
-
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -48,4 +47,3 @@ export const formatDate = (date: string | Date): string => {
     day: "2-digit",
   });
 };
-

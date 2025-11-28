@@ -112,6 +112,7 @@ export const updateSheetDB = async (
         }),
       }
     );
+    console.log("SheetDB API Result:", response);
 
     if (!response.ok) {
       throw new Error(`Failed to update data: ${response.statusText}`);

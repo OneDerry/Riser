@@ -26,7 +26,7 @@ const EnrollmentPage: React.FC = () => {
           Back to Riser
         </Link>
       </div>
-      <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-8">
+      <div className="max-w-4xl mt-20 mx-auto bg-white shadow-md rounded-lg p-8">
         <img src={logo} alt="" className="h-12 w-12 text-center" />
         <h1 className="text-3xl font-bold text-blue-700 mb-6">Enrollment</h1>
 

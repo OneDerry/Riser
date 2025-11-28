@@ -1,5 +1,4 @@
-
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { RootState } from "./store";
 import {
   BaseQueryFn,
@@ -10,17 +9,14 @@ import {
   retry,
 } from "@reduxjs/toolkit/query/react";
 
-// import { logout } from "./features/authSlice";
-
-// const BASE_URL = window.location.origin == "https://changeforhumanity.org" ? "https://api.changeforhumanity.org/api/v1" : "http://138.68.91.89:7700/api/v1";
-
 // const BASE_URL = import.meta.env.VITE_BASE_URL;
-const BASE_URL = 'http://localhost:2000/api/v1';
+const BASE_URL = "http://localhost:2000/api/v1";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: BASE_URL,
   prepareHeaders: (headers, { getState }) => {
-    const token = (getState() as RootState).auth.token;
+    const state = getState() as RootState;
+    const token = (state as any)?.auth?.token;
 
     if (token) {
       headers.set("Authorization", `Bearer ${token}`);
@@ -38,7 +34,7 @@ const baseQueryWithRetry: BaseQueryFn<
     const result = await baseQuery(args, api, extraOptions);
     if (result.error && result.error.status === 401) {
       // Instead of trying to refresh, we'll log out the user
-    //   api.dispatch(logout());
+      //   api.dispatch(logout());
     }
     return result;
   },
@@ -59,8 +55,6 @@ export const api = createApi({
     }
     return result;
   },
-  tagTypes: [
-    "User",
-  ],
+  tagTypes: ["User"],
   endpoints: () => ({}),
 });

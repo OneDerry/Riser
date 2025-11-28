@@ -56,12 +56,12 @@ export default function SchoolPaymentForm() {
   const [submitEnrollment] = useSubmitEnrollmentMutation();
 
   const feeTypes = [
-    { name: "Tuition Fee", amount: 5000 },
-    { name: "Registration Fee", amount: 500 },
-    { name: "Technology Fee", amount: 300 },
-    { name: "Library Fee", amount: 200 },
-    { name: "Activity Fee", amount: 250 },
-    { name: "Full Package", amount: 6000 },
+    { name: "Tuition Fee", amount: 50000 },
+    { name: "Registration Fee", amount: 5000 },
+    { name: "Technology Fee", amount: 3000 },
+    { name: "Library Fee", amount: 2500 },
+    { name: "Activity Fee", amount: 2500 },
+    { name: "Full Package", amount: 72000 },
   ];
 
   const feeType = watch("feeType");
@@ -91,6 +91,7 @@ export default function SchoolPaymentForm() {
   });
 
   const onSubmit = async (data: FormValues) => {
+    console.log("SUBMIT HANDLER CALLED");
     setIsSubmitting(true);
     setErrorMessage(null);
 
@@ -126,31 +127,44 @@ export default function SchoolPaymentForm() {
 
     const pendingReference = paystackReference;
 
+    // Timeout/fail-safe in case Paystack never calls back, so you never get stuck
+    const callbackFailSafe = setTimeout(() => {
+      console.log(
+        "[FAILSAFE] Paystack modal did not trigger any callbacks. Resetting isSubmitting."
+      );
+      setIsSubmitting(false);
+    }, 60000); // 60 seconds
+
     launchPaystack({
       onSuccess: async (response) => {
+        clearTimeout(callbackFailSafe);
+        console.log("PAYSTACK SUCCESS CALLBACK FIRED", response);
         const finalReference = response.reference || pendingReference;
 
         try {
-          await submitEnrollment({
+          const apiResult = await submitEnrollment({
             ...enrollmentData,
             paymentReference: finalReference,
             paymentStatus: "completed",
           }).unwrap();
+          console.log("SheetDB API Result: ", apiResult);
 
           setPaymentReference(finalReference);
           setIsSuccess(true);
           reset();
           regenerateReference();
-        } catch {
+        } catch (err) {
           setErrorMessage(
             "Payment succeeded, but saving enrollment failed. Contact support."
           );
+          console.error("Error saving to SheetDB:", err);
         } finally {
           setIsSubmitting(false);
         }
       },
-
       onClose: () => {
+        clearTimeout(callbackFailSafe);
+        console.log("PAYSTACK CLOSE CALLBACK FIRED");
         setIsSubmitting(false);
         setErrorMessage("Payment cancelled. Please try again.");
       },
@@ -201,7 +215,7 @@ export default function SchoolPaymentForm() {
         <ArrowLeft /> Back to Enroll
       </Link>
 
-      <div className="mx-auto mt-6 w-[90%] rounded-lg bg-white shadow-lg sm:w-[60%]">
+      <div className="mx-auto mt-20 w-[90%] p-2 rounded-lg bg-white shadow-lg sm:w-[60%]">
         <div className="border-b bg-slate-50 px-6 py-4">
           <h2 className="text-2xl font-bold text-gray-800">
             School Fee Payment & Enrollment
@@ -229,35 +243,35 @@ export default function SchoolPaymentForm() {
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <FormField
-                    control={control}
                     name="parentFirstName"
+                    control={control}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>First Name *</FormLabel>
                         <FormControl>
                           <Input placeholder="Enter first name" {...field} />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-red-500" />
                       </FormItem>
                     )}
                   />
                   <FormField
-                    control={control}
                     name="parentLastName"
+                    control={control}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Last Name *</FormLabel>
                         <FormControl>
                           <Input placeholder="Enter last name" {...field} />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-red-500" />
                       </FormItem>
                     )}
                   />
 
                   <FormField
-                    control={control}
                     name="parentEmail"
+                    control={control}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Email *</FormLabel>
@@ -268,14 +282,14 @@ export default function SchoolPaymentForm() {
                             {...field}
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-red-500" />
                       </FormItem>
                     )}
                   />
 
                   <FormField
-                    control={control}
                     name="parentPhone"
+                    control={control}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Phone *</FormLabel>
@@ -286,7 +300,7 @@ export default function SchoolPaymentForm() {
                             {...field}
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-red-500" />
                       </FormItem>
                     )}
                   />
@@ -303,37 +317,37 @@ export default function SchoolPaymentForm() {
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <FormField
-                    control={control}
                     name="studentFirstName"
+                    control={control}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>First Name *</FormLabel>
                         <FormControl>
                           <Input placeholder="Enter first name" {...field} />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-red-500" />
                       </FormItem>
                     )}
                   />
 
                   <FormField
-                    control={control}
                     name="studentLastName"
+                    control={control}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Last Name *</FormLabel>
                         <FormControl>
                           <Input placeholder="Enter last name" {...field} />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-red-500" />
                       </FormItem>
                     )}
                   />
 
                   {/* DOB */}
                   <FormField
-                    control={control}
                     name="studentDob"
+                    control={control}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Date of Birth *</FormLabel>
@@ -365,14 +379,14 @@ export default function SchoolPaymentForm() {
                             )}
                           </div>
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-red-500" />
                       </FormItem>
                     )}
                   />
 
                   <FormField
-                    control={control}
                     name="studentGender"
+                    control={control}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Gender *</FormLabel>
@@ -387,7 +401,7 @@ export default function SchoolPaymentForm() {
                             <option value="other">Other</option>
                           </select>
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-red-500" />
                       </FormItem>
                     )}
                   />
@@ -439,14 +453,14 @@ export default function SchoolPaymentForm() {
                             ))}
                           </select>
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-red-500" />
                       </FormItem>
                     )}
                   />
 
                   <FormField
-                    control={control}
                     name="academicYear"
+                    control={control}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Academic Year *</FormLabel>
@@ -463,14 +477,14 @@ export default function SchoolPaymentForm() {
                             ))}
                           </select>
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-red-500" />
                       </FormItem>
                     )}
                   />
 
                   <FormField
-                    control={control}
                     name="term"
+                    control={control}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
@@ -491,7 +505,7 @@ export default function SchoolPaymentForm() {
                             )}
                           </select>
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-red-500" />
                       </FormItem>
                     )}
                   />
@@ -518,8 +532,8 @@ export default function SchoolPaymentForm() {
                 )}
 
                 <FormField
-                  control={control}
                   name="feeType"
+                  control={control}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Fee Type *</FormLabel>
@@ -550,8 +564,8 @@ export default function SchoolPaymentForm() {
                   Additional Information
                 </h3>
                 <FormField
-                  control={control}
                   name="additionalInfo"
+                  control={control}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Any special information?</FormLabel>
@@ -561,7 +575,7 @@ export default function SchoolPaymentForm() {
                           {...field}
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-red-500" />
                     </FormItem>
                   )}
                 />
@@ -581,8 +595,13 @@ export default function SchoolPaymentForm() {
                 Cancel
               </Button>
 
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Processing..." : "Pay with Paystack"}
+              <Button
+                className="bg-blue-800 text-white"
+                variant="default"
+                type="submit"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Processing..." : "Proceed to Payment"}
               </Button>
             </div>
           </form>

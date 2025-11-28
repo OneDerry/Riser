@@ -41,6 +41,7 @@
     "sonner": "^1.5.0",
     "sort-by": "^0.0.2",
     "tailwind-merge": "^3.0.2",
+    "tw-merge": "^0.0.1-alpha.3",
     "uuid": "^13.0.0",
     "web3": "^4.13.0",
     "yup": "^1.4.0",
