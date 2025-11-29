@@ -2,7 +2,6 @@ import { ArrowLeft } from "lucide-react";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-
 import logo from "../assets/logo.jpg";
 import background from "../assets/school_building.jpg";
 const EnrollmentPage: React.FC = () => {
@@ -15,18 +14,19 @@ const EnrollmentPage: React.FC = () => {
   return (
     <div
       style={{ backgroundImage: `url(${background})` }}
-      className="min-h-screen bg-cover bg-no-repeat bg-center px-6 py-12"
+      className="relative min-h-screen bg-cover bg-no-repeat bg-center px-6 py-12"
     >
-      <div>
+      <div className="absolute inset-0 bg-black/30 z-0" />
+      <div className="relative z-10 text-white">
         <Link
           to="/"
-          className="font-bold flex items-center gap-2 hover:-translate-x-2"
+          className="font-bold text-white flex items-center gap-2 hover:-translate-x-2"
         >
           <ArrowLeft className="" />
           Back to Riser
         </Link>
       </div>
-      <div className="max-w-4xl mt-20 mx-auto bg-white shadow-md rounded-lg p-8">
+      <div className="relative z-10 max-w-4xl mt-20 mx-auto bg-white shadow-md rounded-lg p-8">
         <img src={logo} alt="" className="h-12 w-12 text-center" />
         <h1 className="text-3xl font-bold text-blue-700 mb-6">Enrollment</h1>
 

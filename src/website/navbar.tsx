@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 
 import { cn } from "../lib/utils";
 import logo from "../assets/logo_main.png";
+import { ArrowRight } from "lucide-react";
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -107,6 +108,9 @@ const Navbar = () => {
           </a>
           <a href="#contacts" className=" hover:text-primary transition-colors">
             Contacts
+          </a>
+          <a href="/enroll" className=" hover:text-primary transition-colors">
+            Enroll
           </a>
         </div>
       </div>

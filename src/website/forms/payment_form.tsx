@@ -23,6 +23,7 @@ import { formSchema, type FormValues } from "./validations";
 import { usePaystackCheckout } from "../../paystack/use_paystack_checkout";
 import { useSubmitEnrollmentMutation } from "../../app/features/payments.api";
 import { EnrollmentData } from "../../app/services/sheet_db_service";
+import { toast } from "sonner";
 
 const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || "";
 
@@ -91,7 +92,6 @@ export default function SchoolPaymentForm() {
   });
 
   const onSubmit = async (data: FormValues) => {
-    console.log("SUBMIT HANDLER CALLED");
     setIsSubmitting(true);
     setErrorMessage(null);
 
@@ -127,18 +127,13 @@ export default function SchoolPaymentForm() {
 
     const pendingReference = paystackReference;
 
-    // Timeout/fail-safe in case Paystack never calls back, so you never get stuck
     const callbackFailSafe = setTimeout(() => {
-      console.log(
-        "[FAILSAFE] Paystack modal did not trigger any callbacks. Resetting isSubmitting."
-      );
       setIsSubmitting(false);
     }, 60000); // 60 seconds
 
     launchPaystack({
       onSuccess: async (response) => {
         clearTimeout(callbackFailSafe);
-        console.log("PAYSTACK SUCCESS CALLBACK FIRED", response);
         const finalReference = response.reference || pendingReference;
 
         try {
@@ -147,8 +142,9 @@ export default function SchoolPaymentForm() {
             paymentReference: finalReference,
             paymentStatus: "completed",
           }).unwrap();
-          console.log("SheetDB API Result: ", apiResult);
-
+          if (apiResult) {
+            toast.success('Successful!');
+          }
           setPaymentReference(finalReference);
           setIsSuccess(true);
           reset();
@@ -164,7 +160,6 @@ export default function SchoolPaymentForm() {
       },
       onClose: () => {
         clearTimeout(callbackFailSafe);
-        console.log("PAYSTACK CLOSE CALLBACK FIRED");
         setIsSubmitting(false);
         setErrorMessage("Payment cancelled. Please try again.");
       },
@@ -206,16 +201,18 @@ export default function SchoolPaymentForm() {
   return (
     <div
       style={{ backgroundImage: `url(${background})` }}
-      className="min-h-screen bg-cover bg-center bg-no-repeat px-6 py-12"
+      className="relative min-h-screen bg-cover bg-center bg-no-repeat px-6 py-12"
     >
+      <div className="absolute inset-0 bg-black/30 z-0" />
+
       <Link
         to="/enroll"
-        className="flex items-center gap-2 font-bold transition hover:-translate-x-2"
+        className="relative z-10 text-white flex items-center gap-2 font-bold transition hover:-translate-x-2"
       >
         <ArrowLeft /> Back to Enroll
       </Link>
 
-      <div className="mx-auto mt-20 w-[90%] p-2 rounded-lg bg-white shadow-lg sm:w-[60%]">
+      <div className="relative z-10 mx-auto mt-20 w-[90%] p-2 rounded-lg bg-white shadow-lg sm:w-[60%]">
         <div className="border-b bg-slate-50 px-6 py-4">
           <h2 className="text-2xl font-bold text-gray-800">
             School Fee Payment & Enrollment

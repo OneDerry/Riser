@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import {
   usePaystackCheckout,
   type PaystackSuccessResponse,
@@ -9,12 +10,18 @@ const PaystackPayment = () => {
     amount: 200,
   });
 
-  const onSuccess = (reference: PaystackSuccessResponse) => {
-    console.log("PAYSTACK SUCCESS::: ", reference);
+  const onSuccess = (response: PaystackSuccessResponse) => {
+    const paymentReference = (response as { reference?: string }).reference;
+
+    if (paymentReference) {
+      toast.success(`Payment successful! Reference: ${paymentReference}`);
+    } else {
+      toast.success("Payment successful!");
+    }
   };
 
   const onClose = () => {
-    console.log("Paystack dialog closed");
+    toast.success("Payment window closed. You can try again if you wish.");
   };
 
   return (

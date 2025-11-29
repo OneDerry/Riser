@@ -70,8 +70,30 @@ const Facilities = () => {
   };
 
   return (
-    <section className="py-16 bg-blue-900 transition-colors duration-300 text-white">
-      <div className="container mx-auto px-4">
+    <section className="relative py-20 bg-black duration-300 text-white overflow-hidden">
+      {/* Decorative lanterns */}
+      <div className="absolute left-0 top-0 z-10 w-full">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-start gap-8">
+            {[1, 2, 3].map((i) => (
+              <motion.div
+                key={i}
+                initial={{ y: -100, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{
+                  delay: i * 0.2,
+                  duration: 1.5,
+                  repeat: Number.POSITIVE_INFINITY,
+                  repeatType: "reverse",
+                }}
+                className="h-24 w-8 origin-top bg-white rounded-bl-full"
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 relative z-0">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -136,6 +158,27 @@ const Facilities = () => {
             </span>
           </div>
         </motion.div>
+      </div>
+
+      <div className="absolute right-0 bottom-0 z-10 w-full">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-end gap-8">
+            {[1, 2, 3].map((i) => (
+              <motion.div
+                key={i}
+                initial={{ y: 100, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{
+                  delay: i * 0.2,
+                  duration: 1.5,
+                  repeat: Number.POSITIVE_INFINITY,
+                  repeatType: "reverse",
+                }}
+                className="h-24 w-8 origin-bottom bg-white rounded-tr-full"
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

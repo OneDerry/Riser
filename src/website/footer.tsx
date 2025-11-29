@@ -47,7 +47,7 @@ const Footer = () => {
   return (
     <motion.footer
       id="contacts"
-      className="bg-gradient-to-b from-slate-50 to-slate-100 pt-16 pb-6 border-t border-slate-200"
+      className="bg-black pt-16 pb-6 border-t border-slate-800"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true }}
@@ -56,7 +56,7 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Logo and About */}
-          <div className="space-y-4">
+          <div className="space-y-4 text-slate-100">
             <div className="flex items-center">
               <img
                 src={logoSrc || "/placeholder.svg?height=60&width=200"}
@@ -66,22 +66,22 @@ const Footer = () => {
                 className="h-auto"
               />
             </div>
-            <p className="text-slate-600 text-xs mt-4 max-w-xs">
+            <p className="text-slate-300 text-xs mt-4 max-w-xs">
               A serene, spacious and comfortable learning environment, with
               highly qualified teaching staff.
             </p>
           </div>
 
           {/* Quick Links */}
-          <div className="space-y-4">
-            <h3 className="font-bold text-slate-900 text-lg mb-4 border-b border-slate-200 pb-2">
+          <div className="space-y-4 text-slate-100">
+            <h3 className="font-bold text-slate-100 text-lg mb-4 border-b border-slate-200 pb-2">
               Links
             </h3>
             <ul className="space-y-2">
               <li>
                 <Link
                   to="#"
-                  className="text-slate-600 hover:text-blue-500 transition-colors flex items-center group"
+                  className="text-slate-300 hover:text-blue-400 transition-colors flex items-center group"
                 >
                   <span>Admissions</span>
                 </Link>
@@ -89,7 +89,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="#"
-                  className="text-slate-600 hover:text-blue-500 transition-colors flex items-center group"
+                  className="text-slate-300 hover:text-blue-500 transition-colors flex items-center group"
                 >
                   <span>Download Prospectus</span>
                 </Link>
@@ -98,7 +98,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="#"
-                  className="text-slate-600 hover:text-blue-500 transition-colors flex items-center group"
+                  className="text-slate-300 hover:text-blue-500 transition-colors flex items-center group"
                 >
                   <span>FAQ's</span>
                 </Link>
@@ -108,50 +108,50 @@ const Footer = () => {
 
           {/* Contact Information */}
           <div className="space-y-4">
-            <h3 className="font-bold text-slate-900 text-lg mb-4 border-b border-slate-200 pb-2">
+            <h3 className="font-bold text-slate-300 text-lg mb-4 border-b border-slate-200 pb-2">
               Contact Us
             </h3>
             <ul className="space-y-4">
               <li className="flex items-start">
                 <Mail className="h-5 w-5 text-primary mr-3 mt-0.5 flex-shrink-0" />
-                <span className="text-slate-600 text-sm">
+                <span className="text-slate-300 text-sm">
                   riserschool@gmail.com
                 </span>
               </li>
               <li className="flex items-start">
                 <MapPin className="h-5 w-5 text-primary mr-3 mt-0.5 flex-shrink-0" />
-                <span className="text-slate-600 text-sm">
+                <span className="text-slate-300 text-sm">
                   No. 10 Majokwe Olomu Street, Off Effurun Sapele Road, Effurun
                   (between Ecobank and Zenith bank), Effurun, Nigeria, 330102
                 </span>
               </li>
               <li className="flex items-start">
                 <Phone className="h-5 w-5 text-primary mr-3 mt-0.5 flex-shrink-0" />
-                <span className="text-slate-600 text-sm">0802 300 4355</span>
+                <span className="text-slate-300 text-sm">0802 300 4355</span>
               </li>
             </ul>
             <div className="flex space-x-4 pt-2">
               <Link
                 to="https://web.facebook.com/RiserAdmin/?_rdc=1&_rdr#"
-                className="text-slate-500 hover:text-primary transition-colors"
+                className="text-slate-400 hover:text-primary transition-colors"
               >
                 <Facebook size={18} />
               </Link>
               <Link
                 to="https://x.com/riserschool"
-                className="text-slate-500 hover:text-primary transition-colors"
+                className="text-slate-400 hover:text-primary transition-colors"
               >
                 <FaXTwitter size={18} />
               </Link>
               <Link
                 to="https://instagram.com/riserschool"
-                className="text-slate-500 hover:text-primary transition-colors"
+                className="text-slate-400 hover:text-primary transition-colors"
               >
                 <Instagram size={18} />
               </Link>
               <Link
                 to="https://linkedin.com/company/riserschool"
-                className="text-slate-500 hover:text-primary transition-colors"
+                className="text-slate-400 hover:text-primary transition-colors"
               >
                 <Linkedin size={18} />
               </Link>
@@ -160,17 +160,17 @@ const Footer = () => {
 
           {/* Newsletter */}
           <div className="space-y-4">
-            <h3 className="font-bold text-slate-900 text-lg mb-4 border-b border-slate-200 pb-2">
+            <h3 className="font-bold text-slate-300 text-lg mb-4 border-b border-slate-200 pb-2">
               Newsletter
             </h3>
-            <p className="text-slate-600 text-sm mb-4">
+            <p className="text-slate-300 text-sm mb-4">
               Subscribe to our newsletter to receive updates and news.
             </p>
             <form onSubmit={handleSubmit} className="space-y-3">
               <div className="space-y-2 ">
                 <label
                   htmlFor="email"
-                  className="text-sm font-medium text-slate-700"
+                  className="text-sm font-medium text-slate-200"
                 >
                   Email Address
                 </label>
@@ -198,22 +198,22 @@ const Footer = () => {
         </div>
 
         {/* Copyright */}
-        <div className="mt-12 pt-6 border-t border-slate-200">
+        <div className="mt-12 pt-6 border-t border-slate-800">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-slate-500 text-sm">
+            <p className="text-slate-400 text-sm">
               © {new Date().getFullYear()} Riser School, Effurun. All rights
               reserved.
             </p>
             <div className="flex gap-6">
               <Link
                 to="#"
-                className="text-slate-500 hover:text-primary text-sm transition-colors"
+                className="text-slate-400 hover:text-primary text-sm transition-colors"
               >
                 Privacy Policy
               </Link>
               <Link
                 to="#"
-                className="text-slate-500 hover:text-primary text-sm transition-colors"
+                className="text-slate-400 hover:text-primary text-sm transition-colors"
               >
                 Terms & Conditions
               </Link>

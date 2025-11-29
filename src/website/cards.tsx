@@ -23,6 +23,7 @@ import complete from "../assets/interior/complete.jpg";
 import library from "../assets/interior/library.jpg";
 import lab from "../assets/interior/lab.jpg";
 import independence from "../assets/interior/Independence.jpg";
+import backgroundImage from "../assets/school_building.jpg";
 
 import { cn } from "../lib/utils";
 
@@ -167,8 +168,14 @@ const ImmsersiveGallery = () => {
   return (
     <section
       id="gallery"
-      className="relative min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 overflow-hidden py-20"
+      className="relative min-h-screen overflow-hidden py-20"
     >
+      {/* Background image layer */}
+      <div
+        className="pointer-events-none absolute inset-0 -z-30 bg-cover bg-center bg-fixed opacity-80"
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      />
+
       {/* Custom cursor */}
       <motion.div
         className={cn(
@@ -189,12 +196,7 @@ const ImmsersiveGallery = () => {
       />
 
       {/* Background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-slate-50/80 to-slate-100/80 backdrop-blur-sm z-10"></div>
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-blue-300/20 blur-3xl"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-indigo-300/20 blur-3xl"></div>
-        <div className="absolute top-3/4 left-1/2 w-80 h-80 rounded-full bg-purple-300/20 blur-3xl"></div>
-      </div>
+      <div className="absolute inset-0  bg-black/70" />
 
       <div className="container mx-auto px-4 relative z-20">
         {/* Header section with parallax effect */}
@@ -230,7 +232,7 @@ const ImmsersiveGallery = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={headerInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8 }}
-            className="mt-4 text-xl md:text-2xl font-serif text-slate-600 max-w-xl mx-auto"
+            className="mt-4 text-xl md:text-2xl font-serif text-white max-w-xl mx-auto"
           >
             Immerse yourself in our world-class facilities and vibrant community
           </motion.p>

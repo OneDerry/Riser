@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { ArrowUp, CheckCircle, Users, Briefcase, Heart } from "lucide-react";
 
-
 // import { cn } from "@/lib/utils";
 
 export default function WhatOthersThink() {
@@ -39,7 +38,12 @@ export default function WhatOthersThink() {
     const steps = 60;
     const stepTime = duration / steps;
 
-    const targetValues = { years: 10, students: 138, active: 23, customers: 93 };
+    const targetValues = {
+      years: 10,
+      students: 138,
+      active: 23,
+      customers: 93,
+    };
     let currentStep = 0;
 
     const interval = setInterval(() => {
