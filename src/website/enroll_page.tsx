@@ -1,9 +1,10 @@
 import { ArrowLeft } from "lucide-react";
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import logo from "../assets/logo.jpg";
-import background from "../assets/school_building.jpg";
+import background from "../assets/new/main_building.png";
+import { Button } from "../shared/common";
 const EnrollmentPage: React.FC = () => {
   const navigate = useNavigate();
 
@@ -18,22 +19,24 @@ const EnrollmentPage: React.FC = () => {
     >
       <div className="absolute inset-0 bg-black/30 z-0" />
       <div className="relative z-10 text-white">
-        <Link
-          to="/"
-          className="font-bold text-white flex items-center gap-2 hover:-translate-x-2"
+        <Button
+          onClick={() => navigate("/")}
+          variant="link"
+          className="font-bold text-white fixed mt-5 flex items-center gap-2 hover:scale-105 hover:text-blue-500"
         >
           <ArrowLeft className="" />
-          Back to Riser
-        </Link>
+          Back
+        </Button>
       </div>
-      <div className="relative z-10 max-w-4xl mt-20 mx-auto bg-white shadow-md rounded-lg p-8">
+      <div className="relative z-10 max-w-4xl mt-14 mx-auto bg-white shadow-md rounded-lg p-8">
         <img src={logo} alt="" className="h-12 w-12 text-center" />
         <h1 className="text-3xl font-bold text-blue-700 mb-6">Enrollment</h1>
 
         <p className="text-gray-700 mb-4">
-          Welcome to the official School Fee Payment & Enrollment portal! We are
-          committed to making the admission and fee payment process seamless,
-          secure, and convenient for both new and returning students.
+          Welcome to the official School Fee Payment & Enrollment portal!
+          <br /> We are committed to making the admission and fee payment
+          process seamless, secure, and convenient for both new and returning
+          students.
         </p>
 
         <h2 className="text-2xl font-semibold text-gray-800 mt-6 mb-2">
@@ -74,8 +77,9 @@ const EnrollmentPage: React.FC = () => {
         <ul className="list-disc list-inside text-gray-700 mb-6">
           <li>Ensure all information provided is accurate and up-to-date.</li>
           <li>
-            Documents required for enrollment (e.g., birth certificate, academic
-            records, passport photo) must be scanned clearly.
+            Documents required for enrollment (e.g., birth certificate,
+            academic records, passport photo), please ensure to bring them
+            with you to the school.
           </li>
           <li>
             Our support team is available to assist you with any issues or

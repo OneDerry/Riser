@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 
-import { Card } from "../shared/card";
 import {
   CheckCircle,
   FlaskRoundIcon as Flask,
@@ -11,6 +10,7 @@ import {
   Utensils,
   HandCoins,
 } from "lucide-react";
+import { Card } from "../shared/common";
 
 const Facilities = () => {
   const facilities = [

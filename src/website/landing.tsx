@@ -1,11 +1,14 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ArrowRight, ChevronDown } from "lucide-react";
-
 import { motion } from "framer-motion";
 
+import { Button } from "../shared/common";
 import backgroundImage from "../assets/background.jpg";
+
 import Navbar from "./navbar";
+
 export const Hero = () => {
+  const navigate = useNavigate();
   const scrollToContent = () => {
     const contentSection = document.getElementById("content-section");
     if (contentSection) {
@@ -14,7 +17,6 @@ export const Hero = () => {
   };
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
-      {/* Background with parallax effect */}
       <motion.div
         className="absolute inset-0 z-0"
         initial={{ scale: 1.1 }}
@@ -28,14 +30,10 @@ export const Hero = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/60 to-black/40" />
       </motion.div>
 
-      {/* Content */}
       <div className="relative z-10 h-full">
-        {/* Navbar */}
         <Navbar />
-        {/* Hero Content */}
         <div className="container mx-auto px-4 h-screen flex flex-col justify-center">
           <div className="max-w-2xl ml-0 md:ml-10 lg:ml-20">
-            {/* Badge */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -47,7 +45,6 @@ export const Hero = () => {
               </span>
             </motion.div>
 
-            {/* Heading */}
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -59,7 +56,6 @@ export const Hero = () => {
               </span>
             </motion.h1>
 
-            {/* Description */}
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -71,7 +67,6 @@ export const Hero = () => {
               life's challenges.
             </motion.p>
 
-            {/* CTA Buttons */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -79,24 +74,22 @@ export const Hero = () => {
               className=""
             >
               <div className="grid grid-cols-2 gap-4 items-center">
-                <Link to="/enroll">
-                  <button
-                    // size="lg"
+                  <Button
+                    onClick={() => navigate("/enroll")}
+                    variant="default"
                     className="bg-blue-800 hover:bg-blue-700 border-blue-700 border w-full text-white text-sm group flex items-center justify-center p-3 rounded-md"
                   >
                     Enroll
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                  </button>
-                </Link>
+                    <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  </Button>
 
-                <button className="border-white/30 border border-blue-700 w-full text-white text-sm hover:bg-white/10 backdrop-blur-sm flex items-center justify-center p-3 rounded-md">
+                <Button className="border-white/30 border border-blue-700 w-full text-white text-sm hover:bg-white/10 backdrop-blur-sm flex items-center justify-center p-3 rounded-md">
                   Explore Programs
-                </button>
+                </Button>
               </div>
             </motion.div>
           </div>
 
-          {/* Scroll Indicator */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -119,7 +112,6 @@ export const Hero = () => {
         </div>
       </div>
 
-      {/* Decorative Elements */}
       <div className="absolute top-0 right-0 w-1/3 h-screen overflow-hidden z-[5] pointer-events-none">
         <div className="absolute -right-20 top-20 w-96 h-96 rounded-full bg-blue-500/10 blur-3xl"></div>
         <div className="absolute -right-20 bottom-20 w-80 h-80 rounded-full bg-indigo-500/10 blur-3xl"></div>

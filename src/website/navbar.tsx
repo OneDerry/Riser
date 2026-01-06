@@ -1,12 +1,40 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-
 import { cn } from "../lib/utils";
+import { scrollToHash } from "../lib/utils/scroll";
 import logo from "../assets/logo_main.png";
+import { TnavbarItems } from "../lib/types";
+import { buttonVariants } from "../shared/common";
 
 const Navbar = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash) {
+      scrollToHash(location.hash);
+    }
+  }, [location]);
+
+  const handleNavClick = (e: React.MouseEvent, to: string) => {
+    if (to.includes("#")) {
+      e.preventDefault();
+      const hash = to.split("#")[1];
+      if (window.location.pathname === "/") {
+        scrollToHash(hash);
+      } else {
+        window.location.href = `/#${hash}`;
+      }
+    }
+  };
+  const navItems: TnavbarItems[] = [
+    { url: "/", name: "Home" },
+    { url: "/#about", name: "About us" },
+    { url: "/#admission", name: "Admission" },
+    { url: "/#gallery", name: "Gallery" },
+    { url: "/#contacts", name: "Contacts" },
+    { url: "/form", name: "Enroll" },
+  ];
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -91,27 +119,25 @@ const Navbar = () => {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-6">
-          <a href="#main" className=" hover:text-primary transition-colors">
-            Home
-          </a>
-          <a href="#about" className=" hover:text-primary transition-colors">
-            About Us
-          </a>
-          <a
-            href="#admission"
-            className=" hover:text-primary transition-colors"
-          >
-            Admission
-          </a>
-          <a href="#gallery" className=" hover:text-primary transition-colors">
-            Gallery
-          </a>
-          <a href="#contacts" className=" hover:text-primary transition-colors">
-            Contacts
-          </a>
-          <a href="/enroll" className=" hover:text-primary transition-colors">
-            Enroll
-          </a>
+          {navItems.map((item) => (
+            <NavLink
+              to={item.url}
+              key={item.name}
+              onClick={(e) => handleNavClick(e, item.url)}
+              className={({ isActive }) =>
+                cn(
+                  "text-sm font-normal capitalize transition-colors hover:text-primary cursor-pointer",
+                  buttonVariants({ variant: "linkHover2" }),
+                  {
+                    "text-primary": isActive || (location.hash === `#${item.url.split('#')[1]}` && item.url.includes('#')),
+                    "text-foreground hover:text-primary": !isActive && !(location.hash === `#${item.url.split('#')[1]}` && item.url.includes('#'))
+                  }
+                )
+              }
+            >
+              {item.name}
+            </NavLink>
+          ))}
         </div>
       </div>
 
@@ -119,21 +145,33 @@ const Navbar = () => {
       {isMenuOpen && (
         <div className="md:hidden bg-white/90 backdrop-blur-sm py-4">
           <div className="container mx-auto px-4 flex flex-col space-y-4">
-            <Link to="/" className=" transition-colors block">
-              Home
-            </Link>
-            <Link to="#admission" className=" transition-colors block">
-              Admission
-            </Link>
-            <Link to="#about" className=" transition-colors block">
-              About Us
-            </Link>
-            <Link to="#gallery" className=" transition-colors block">
-              Gallery
-            </Link>
-            <Link to="#contacts" className=" transition-colors block">
-              Contacts
-            </Link>
+            {navItems.map((item) => (
+              <NavLink
+                to={item.url}
+                key={item.name}
+                onClick={(e) => handleNavClick(e, item.url)}
+                className={({ isActive }) =>
+                  cn(
+                    "text-sm font-normal capitalize transition-colors hover:text-primary cursor-pointer",
+                    buttonVariants({ variant: "linkHover2" }),
+                    {
+                      "text-primary":
+                        isActive ||
+                        (location.hash === `#${item.url.split("#")[1]}` &&
+                          item.url.includes("#")),
+                      "text-foreground hover:text-primary":
+                        !isActive &&
+                        !(
+                          location.hash === `#${item.url.split("#")[1]}` &&
+                          item.url.includes("#")
+                        ),
+                    }
+                  )
+                }
+              >
+                {item.name}
+              </NavLink>
+            ))}
           </div>
         </div>
       )}

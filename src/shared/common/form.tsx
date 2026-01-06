@@ -90,21 +90,37 @@ function FormItem({ className, ...props }: React.ComponentProps<"div">) {
 
 function FormLabel({
   className,
+  required,
+  children,
   ...props
-}: React.ComponentProps<typeof LabelPrimitive.Root>) {
+}: React.ComponentProps<typeof LabelPrimitive.Root> & { required?: boolean }) {
   const { error, formItemId } = useFormField();
 
   return (
     <Label
       data-slot="form-label"
       data-error={!!error}
-      className={cn("data-[error=true]:text-destructive", className)}
+      className={cn(
+        "gap-0.5",
+        error &&
+          "text-[hsl(var(--destructive))] dark:text-[hsl(var(--destructive-foreground))]",
+        className
+      )}
       htmlFor={formItemId}
       {...props}
-    />
+    >
+      {children}
+      {required && (
+        <span
+          aria-hidden
+          className="text-[hsl(var(--destructive))] dark:text-[hsl(var(--destructive-foreground))]"
+        >
+          *
+        </span>
+      )}
+    </Label>
   );
 }
-
 function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
   const { error, formItemId, formDescriptionId, formMessageId } =
     useFormField();
@@ -147,9 +163,11 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
 
   return (
     <p
-      data-slot="form-message"
       id={formMessageId}
-      className={cn("text-destructive text-sm", className)}
+      className={cn(
+        "text-sm font-medium text-[hsl(var(--destructive))] dark:text-[hsl(var(--destructive-foreground))]",
+        className
+      )}
       {...props}
     >
       {body}

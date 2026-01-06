@@ -18,12 +18,12 @@ import {
 } from "framer-motion";
 
 import classes from "../assets/interior/classes.jpg";
-import buildings from "../assets/school_building.jpg";
+import buildings from "../assets/new/main_building.png";
 import complete from "../assets/interior/complete.jpg";
 import library from "../assets/interior/library.jpg";
 import lab from "../assets/interior/lab.jpg";
 import independence from "../assets/interior/Independence.jpg";
-import backgroundImage from "../assets/school_building.jpg";
+import backgroundImage from "../assets/new/main_building.png";
 
 import { cn } from "../lib/utils";
 
@@ -223,7 +223,7 @@ const ImmsersiveGallery = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={headerInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8 }}
-            className="mt-6 text-5xl md:text-6xl lg:text-7xl font-serif font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900"
+            className="mt-6 text-5xl md:text-6xl lg:text-7xl font-serif font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600"
           >
             A Glimpse
           </motion.h1>
@@ -259,7 +259,7 @@ const ImmsersiveGallery = () => {
               className={cn(
                 "px-4 py-2 rounded-full text-sm font-medium transition-all duration-300",
                 activeCategory === category
-                  ? "bg-primary text-black shadow-lg shadow-primary/20"
+                  ? "bg-primary text-white shadow-lg shadow-primary/20 border border-blue-700"
                   : "bg-white/80 text-blue-700 hover:bg-white hover:shadow-md"
               )}
               onMouseEnter={() => setCursorHovered(true)}

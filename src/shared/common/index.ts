@@ -4,3 +4,6 @@ export * from "./form";
 export * from "./label";
 export * from "./input";
 export * from "./textarea";
+export * from "./success_modal";
+export * from "./card";
+export * from "./parralax_image";

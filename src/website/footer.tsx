@@ -1,10 +1,8 @@
-import type React from "react";
 import { useState } from "react";
 import { FaXTwitter } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 
 import { motion } from "framer-motion";
-import { toast } from "sonner";
 
 import logoSrc from "../assets/logo_main.png";
 import {
@@ -15,22 +13,10 @@ import {
   Instagram,
   Linkedin,
 } from "lucide-react";
+import { Button } from "../shared/common";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    // Simulate form submission
-    setTimeout(() => {
-      toast.success("Subscription successful!");
-      setEmail("");
-      setIsSubmitting(false);
-    }, 800);
-  };
 
   // Animation variants - smooth and fast
   const containerAnimation = {
@@ -42,6 +28,14 @@ const Footer = () => {
         ease: "easeOut",
       },
     },
+  };
+
+  const [message, setMessage] = useState("");
+
+  const handleSendEmail = () => {
+    const subject = encodeURIComponent("Parent enquiry");
+    const body = encodeURIComponent(`Hi,\n\n${message}`);
+    window.location.href = `mailto:riserschool@gmail.com?subject=${subject}&body=${body}`;
   };
 
   return (
@@ -161,20 +155,34 @@ const Footer = () => {
           {/* Newsletter */}
           <div className="space-y-4">
             <h3 className="font-bold text-slate-300 text-lg mb-4 border-b border-slate-200 pb-2">
-              Newsletter
+              Talk to us
             </h3>
-            <p className="text-slate-300 text-sm mb-4">
-              Subscribe to our newsletter to receive updates and news.
-            </p>
-            <form onSubmit={handleSubmit} className="space-y-3">
+            <p className="text-slate-300 text-sm mb-4">For further inquiries</p>
+            <form className="space-y-3">
               <div className="space-y-2 ">
-                <label
-                  htmlFor="email"
-                  className="text-sm font-medium text-slate-200"
-                >
-                  Email Address
-                </label>
-                <div className="flex items-center gap-2 border-2 rounded-md bg-slate-600">
+                <div className="flex flex-col gap-1">
+                  <label
+                    htmlFor="message"
+                    className="text-xs font-medium text-slate-200"
+                  >
+                    Send us a message
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows={4}
+                    className="rounded-md border border-border bg-background px-2 py-2 text-sm text-foreground outline-none ring-0 focus:border-ring"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label
+                    htmlFor="email"
+                    className="text-xs font-medium text-slate-200"
+                  >
+                    Email
+                  </label>
                   <input
                     type="email"
                     id="email"
@@ -184,15 +192,16 @@ const Footer = () => {
                     className="rounded-r-none focus-visible:ring-primary p-2"
                     required
                   />
-                  <button
-                    type="submit"
-                    className="rounded-l-none text-white flex items-center justify-center"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? "..." : "Subscribe"}
-                  </button>
                 </div>
               </div>
+              <Button
+                variant="default"
+                size="lg"
+                onClick={() => handleSendEmail}
+                className="rounded text-white bg-blue-800 flex items-center justify-center"
+              >
+                Send
+              </Button>
             </form>
           </div>
         </div>

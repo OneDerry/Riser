@@ -124,12 +124,13 @@ export default function AdmissionsInfo() {
               School Fees
             </h3>
             <p className="text-gray-700 mb-4">
-              At Riser School, we are committed to providing exceptional value
-              for an outstanding education. Our fee structure reflects the
-              premium learning experience we offer, including access to
-              world-class facilities, personalized support, and comprehensive
-              extracurricular opportunities. All this reflects in our
-              transparency as regards our fee schedule below.
+              At Riser School, 
+              we are committed to providing exceptional value for an outstanding
+              education. Our fee structure reflects the premium learning
+              experience we offer, including access to world-class facilities,
+              personalized support, and comprehensive extracurricular
+              opportunities. All this reflects in our transparency as regards
+              our fee schedule below.
             </p>
             <p className="text-gray-700">
               For more details on tuition and associated fees, please contact

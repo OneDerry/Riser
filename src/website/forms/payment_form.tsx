@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { useForm, useFieldArray } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import {
   Button,
@@ -18,21 +18,24 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 
-import background from "../../assets/school_building.jpg";
+import background from "../../assets/new/main_building.png";
 import { formSchema, type FormValues } from "./validations";
 import { usePaystackCheckout } from "../../paystack/use_paystack_checkout";
 import { useSubmitEnrollmentMutation } from "../../app/features/payments.api";
 import { EnrollmentData } from "../../app/services/sheet_db_service";
 import { toast } from "sonner";
+import { formatCurrency, parseCurrency } from "../../lib/helpers";
 
 const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || "";
 
 export default function SchoolPaymentForm() {
-  const [showCalendar, setShowCalendar] = useState(false);
+  const navigate = useNavigate();
+  const [showCalendar, setShowCalendar] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [paymentReference, setPaymentReference] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [formattedAmount, setFormattedAmount] = useState("");
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -41,39 +44,64 @@ export default function SchoolPaymentForm() {
       parentLastName: "",
       parentEmail: "",
       parentPhone: "",
-      studentFirstName: "",
-      studentLastName: "",
-      studentDob: undefined,
-      studentGender: "",
-      gradeLevel: "",
+      students: [
+        {
+          firstName: "",
+          lastName: "",
+          dob: new Date(),
+          gender: "",
+          gradeLevel: "",
+        },
+      ],
       academicYear: "",
       term: "",
       feeType: "",
+      amount: 0,
       additionalInfo: "",
     },
   });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "students",
+  });
+
+  const addStudent = () => {
+    append({
+      firstName: "",
+      lastName: "",
+      dob: new Date(),
+      gender: "",
+      gradeLevel: "",
+    });
+  };
+
+  const removeStudent = (index: number) => {
+    if (fields.length > 1) {
+      remove(index);
+    }
+  };
 
   const { control, handleSubmit, reset, watch } = form;
   const [submitEnrollment] = useSubmitEnrollmentMutation();
 
   const feeTypes = [
-    { name: "Tuition Fee", amount: 50000 },
-    { name: "Registration Fee", amount: 5000 },
-    { name: "Technology Fee", amount: 3000 },
-    { name: "Library Fee", amount: 2500 },
-    { name: "Activity Fee", amount: 2500 },
-    { name: "Full Package", amount: 72000 },
+    { name: "Tuition Fee" },
+    { name: "Registration Fee" },
+    { name: "Library & Books Fee" },
+    { name: "Full Package" },
   ];
 
   const feeType = watch("feeType");
-  const selectedFee = feeTypes.find((fee) => fee.name === feeType);
-  const paymentAmount = selectedFee?.amount || 0;
+  const amount = Number(watch("amount") || 0);
+  // const selectedFee = feeTypes.find((fee) => fee.name === feeType);
 
   const parentEmail = watch("parentEmail") || "";
   const parentFirstName = watch("parentFirstName");
   const parentLastName = watch("parentLastName");
-  const studentFirstName = watch("studentFirstName");
-  const studentLastName = watch("studentLastName");
+  const students = watch("students") || [];
+
+  const amountInKobo = Math.round(amount * 100); // Convert to kobo for Paystack
 
   const {
     reference: paystackReference,
@@ -82,12 +110,20 @@ export default function SchoolPaymentForm() {
     isReady: isPaystackReady,
   } = usePaystackCheckout({
     email: parentEmail,
-    amount: paymentAmount,
     publicKey: PAYSTACK_PUBLIC_KEY,
+    amount: amountInKobo,
     metadata: {
       parent_name: `${parentFirstName} ${parentLastName}`.trim(),
-      student_name: `${studentFirstName} ${studentLastName}`.trim(),
+      student_count: students.length,
       fee_type: feeType,
+      amount: amount,
+      students_data: JSON.stringify(
+        students.map((s) => ({
+          name: `${s.firstName} ${s.lastName}`.trim(),
+          grade: s.gradeLevel,
+          gender: s.gender,
+        }))
+      ),
     },
   });
 
@@ -101,8 +137,14 @@ export default function SchoolPaymentForm() {
       return;
     }
 
+    if (!parentEmail || !amount || amount <= 0) {
+      setErrorMessage("Please provide a valid email and amount.");
+      setIsSubmitting(false);
+      return;
+    }
+
     if (!isPaystackReady) {
-      setErrorMessage("Please provide email and select fee type.");
+      setErrorMessage("Payment initialization failed. Please try again.");
       setIsSubmitting(false);
       return;
     }
@@ -112,15 +154,17 @@ export default function SchoolPaymentForm() {
       parentLastName: data.parentLastName,
       parentEmail: data.parentEmail,
       parentPhone: data.parentPhone,
-      studentFirstName: data.studentFirstName,
-      studentLastName: data.studentLastName,
-      studentDob: data.studentDob.toISOString(),
-      studentGender: data.studentGender,
-      gradeLevel: data.gradeLevel,
+      studentFirstName: students[0]?.firstName || "",
+      studentLastName: students[0]?.lastName || "",
+      studentDob: students[0]?.dob
+        ? new Date(students[0].dob).toISOString()
+        : "",
+      studentGender: students[0]?.gender || "",
+      gradeLevel: students[0]?.gradeLevel || "",
       academicYear: data.academicYear,
       term: data.term,
       feeType: data.feeType,
-      amount: paymentAmount,
+      amount: amountInKobo,
       paymentMethod: "paystack",
       additionalInfo: data.additionalInfo || "",
     };
@@ -143,7 +187,7 @@ export default function SchoolPaymentForm() {
             paymentStatus: "completed",
           }).unwrap();
           if (apiResult) {
-            toast.success('Successful!');
+            toast.success("Successful!");
           }
           setPaymentReference(finalReference);
           setIsSuccess(true);
@@ -169,7 +213,11 @@ export default function SchoolPaymentForm() {
   if (isSuccess) {
     return (
       <div className="flex h-screen flex-col items-center justify-center p-6">
-        <div className="max-w-xl rounded-lg border border-green-200 bg-green-50 p-6">
+        <div
+          className="sm:max-w-xl rounded-lg border border-green-200 bg-green-50 p-6"
+          role="alert"
+          aria-live="polite"
+        >
           <h3 className="text-lg font-semibold text-green-800">
             Payment Successful!
           </h3>
@@ -191,6 +239,7 @@ export default function SchoolPaymentForm() {
             setPaymentReference(null);
             setErrorMessage(null);
           }}
+          aria-label="Make another payment"
         >
           Make Another Payment
         </Button>
@@ -205,28 +254,41 @@ export default function SchoolPaymentForm() {
     >
       <div className="absolute inset-0 bg-black/30 z-0" />
 
-      <Link
-        to="/enroll"
-        className="relative z-10 text-white flex items-center gap-2 font-bold transition hover:-translate-x-2"
-      >
-        <ArrowLeft /> Back to Enroll
-      </Link>
+      <div className="relative z-10 text-white">
+        <Button
+          onClick={() => navigate("/")}
+          variant="link"
+          className="font-bold text-white fixed mt-5 flex items-center gap-2 hover:scale-105 hover:text-blue-500"
+          aria-label="Go back to home page"
+        >
+          <ArrowLeft aria-hidden="true" />
+          Back
+        </Button>
+      </div>
 
-      <div className="relative z-10 mx-auto mt-20 w-[90%] p-2 rounded-lg bg-white shadow-lg sm:w-[60%]">
+      <div className="relative z-10 mx-auto mt-14 w-full p-2 rounded-lg bg-slate-50 shadow-lg sm:w-[90%]">
         <div className="border-b bg-slate-50 px-6 py-4">
-          <h2 className="text-2xl font-bold text-gray-800">
+          <h1 className="text-2xl font-bold text-gray-800">
             School Fee Payment & Enrollment
-          </h2>
-          <p className="mt-1 text-gray-600">
+          </h1>
+          <p id="form-description" className="mt-1 text-gray-600">
             Complete this form to enroll your child and pay school fees
           </p>
         </div>
 
         <Form {...form}>
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            aria-labelledby="form-title"
+            aria-describedby="form-description"
+          >
             {/* error */}
             {errorMessage && (
-              <div className="mx-6 mt-6 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+              <div
+                className="mx-6 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-800"
+                role="alert"
+                aria-live="assertive"
+              >
                 {errorMessage}
               </div>
             )}
@@ -234,9 +296,14 @@ export default function SchoolPaymentForm() {
             <div className="space-y-8 p-6">
               {/* Parent Info */}
               <section>
-                <h3 className="mb-4 text-lg font-medium">
-                  Parent/Guardian Information
-                </h3>
+                <div className="mb-4">
+                  <h2 id="parent-info-heading" className="text-lg font-bold">
+                    Parent/Guardian Information
+                  </h2>
+                  <p className="text-sm text-gray-600">
+                    Please provide your parent/guardian details.
+                  </p>
+                </div>
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <FormField
@@ -244,11 +311,18 @@ export default function SchoolPaymentForm() {
                     control={control}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>First Name *</FormLabel>
+                        <FormLabel required>First Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter first name" {...field} />
+                          <Input
+                            placeholder="Enter first name"
+                            aria-required="true"
+                            aria-invalid={
+                              !!form.formState.errors.parentFirstName
+                            }
+                            {...field}
+                          />
                         </FormControl>
-                        <FormMessage className="text-red-500" />
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -257,11 +331,18 @@ export default function SchoolPaymentForm() {
                     control={control}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Last Name *</FormLabel>
+                        <FormLabel required>Last Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter last name" {...field} />
+                          <Input
+                            placeholder="Enter last name"
+                            aria-required="true"
+                            aria-invalid={
+                              !!form.formState.errors.parentLastName
+                            }
+                            {...field}
+                          />
                         </FormControl>
-                        <FormMessage className="text-red-500" />
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -271,15 +352,19 @@ export default function SchoolPaymentForm() {
                     control={control}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email *</FormLabel>
+                        <FormLabel required>Email</FormLabel>
                         <FormControl>
                           <Input
                             type="email"
                             placeholder="Enter email"
+                            aria-required="true"
+                            aria-invalid={!!form.formState.errors.parentEmail}
+                            inputMode="email"
+                            autoComplete="email"
                             {...field}
                           />
                         </FormControl>
-                        <FormMessage className="text-red-500" />
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -289,15 +374,19 @@ export default function SchoolPaymentForm() {
                     control={control}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Phone *</FormLabel>
+                        <FormLabel required>Phone</FormLabel>
                         <FormControl>
                           <Input
                             type="tel"
                             placeholder="Enter phone number"
+                            aria-required="true"
+                            aria-invalid={!!form.formState.errors.parentPhone}
+                            inputMode="tel"
+                            autoComplete="tel"
                             {...field}
                           />
                         </FormControl>
-                        <FormMessage className="text-red-500" />
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -308,175 +397,246 @@ export default function SchoolPaymentForm() {
 
               {/* Student Info */}
               <section>
-                <h3 className="mb-4 text-lg font-medium">
-                  Student Information
-                </h3>
-
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <FormField
-                    name="studentFirstName"
-                    control={control}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>First Name *</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter first name" {...field} />
-                        </FormControl>
-                        <FormMessage className="text-red-500" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    name="studentLastName"
-                    control={control}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Last Name *</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter last name" {...field} />
-                        </FormControl>
-                        <FormMessage className="text-red-500" />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* DOB */}
-                  <FormField
-                    name="studentDob"
-                    control={control}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Date of Birth *</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <Input
-                              readOnly
-                              value={
-                                field.value ? format(field.value, "PP") : ""
-                              }
-                              onClick={() => setShowCalendar(!showCalendar)}
-                              placeholder="Select date"
-                              className="cursor-pointer"
-                            />
-
-                            {showCalendar && (
-                              <div className="absolute z-10 mt-1">
-                                <Calendar
-                                  mode="single"
-                                  selected={field.value}
-                                  onSelect={(val) => {
-                                    field.onChange(val);
-                                    setShowCalendar(false);
-                                  }}
-                                  className="rounded-md border shadow-sm"
-                                  captionLayout="dropdown"
-                                />
-                              </div>
-                            )}
-                          </div>
-                        </FormControl>
-                        <FormMessage className="text-red-500" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    name="studentGender"
-                    control={control}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Gender *</FormLabel>
-                        <FormControl>
-                          <select
-                            {...field}
-                            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-                          >
-                            <option value="">Select gender</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                            <option value="other">Other</option>
-                          </select>
-                        </FormControl>
-                        <FormMessage className="text-red-500" />
-                      </FormItem>
-                    )}
-                  />
+                <div className="mb-4 flex items-center justify-between">
+                  <div>
+                    <h2 id="student-info-heading" className="text-lg font-bold">
+                      Student Information
+                    </h2>
+                    <p className="text-sm text-gray-600">
+                      Please provide your child's details, you can add multiple
+                      students if you have more than one child.
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    onClick={addStudent}
+                    aria-label="Add another student"
+                  >
+                    + Add Another Student
+                  </Button>
                 </div>
+
+                {fields.map((student, index) => (
+                  <div key={student.id} className="mb-8 rounded-lg border p-4">
+                    <div className="mb-4 flex items-center justify-between">
+                      <h4 className="font-medium">Student {index + 1}</h4>
+                      {fields.length > 1 && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-500 hover:bg-red-50"
+                          onClick={() => removeStudent(index)}
+                          aria-label={`Remove student ${index + 1}`}
+                        >
+                          Remove
+                        </Button>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <FormField
+                        control={control}
+                        name={`students.${index}.firstName`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel required>First Name</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Enter first name"
+                                aria-required="true"
+                                aria-invalid={
+                                  !!form.formState.errors.students?.[index]
+                                    ?.firstName
+                                }
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={control}
+                        name={`students.${index}.lastName`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel required>Last Name</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Enter last name"
+                                aria-required="true"
+                                aria-invalid={
+                                  !!form.formState.errors.students?.[index]
+                                    ?.lastName
+                                }
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={control}
+                        name={`students.${index}.dob`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel required>Date of Birth</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <Input
+                                  readOnly
+                                  value={
+                                    field.value ? format(field.value, "PP") : ""
+                                  }
+                                  onClick={() =>
+                                    setShowCalendar(`${index}-dob`)
+                                  }
+                                  placeholder="Select date"
+                                  className="cursor-pointer"
+                                />
+
+                                {showCalendar === `${index}-dob` && (
+                                  <div className="absolute z-10 mt-1">
+                                    <Calendar
+                                      mode="single"
+                                      selected={field.value}
+                                      onSelect={(val) => {
+                                        field.onChange(val);
+                                        setShowCalendar("");
+                                      }}
+                                      className="rounded-md border bg-white shadow-sm"
+                                      captionLayout="dropdown"
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={control}
+                        name={`students.${index}.gender`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel required>Gender</FormLabel>
+                            <FormControl>
+                              <select
+                                {...field}
+                                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                              >
+                                <option value="">Select gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                              </select>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={control}
+                        name={`students.${index}.gradeLevel`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel required>Grade Level</FormLabel>
+                            <FormControl>
+                              <select
+                                {...field}
+                                value={field.value || ""}
+                                className="w-full rounded-md border px-3 py-2 text-sm"
+                              >
+                                <option value="">Select grade</option>
+                                {[
+                                  "Kindergarten",
+                                  "Nursery 1",
+                                  "Nursery 2",
+                                  "Nursery 3",
+                                  "Primary 1",
+                                  "Primary 2",
+                                  "Primary 3",
+                                  "Primary 4",
+                                  "Primary 5",
+                                  "Primary 6",
+                                  "JSS1",
+                                  "JSS2",
+                                  "JSS3",
+                                  "SS1",
+                                  "SS2",
+                                  "SS3",
+                                ].map((g) => (
+                                  <option key={g} value={g}>
+                                    {g}
+                                  </option>
+                                ))}
+                              </select>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                ))}
               </section>
 
               <hr className="border-gray-200" />
 
               {/* Enrollment */}
               <section>
-                <h3 className="mb-4 text-lg font-medium">
-                  Enrollment Information
-                </h3>
+                <div className="mb-4">
+                  <h3 className="text-lg font-bold">Enrollment Information</h3>
+                  <p className="text-sm text-gray-600">
+                    Please provide the details of the student(s) you are
+                    enrolling.
+                  </p>
+                </div>
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                   <FormField
-                    control={control}
-                    name="gradeLevel"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Grade Level *</FormLabel>
-                        <FormControl>
-                          <select
-                            {...field}
-                            className="w-full rounded-md border px-3 py-2 text-sm"
-                          >
-                            <option value="">Select grade</option>
-                            {[
-                              "Kindergarten",
-                              "Nursery 1",
-                              "Nursery 2",
-                              "Nursery 3",
-                              "Primary 1",
-                              "Primary 2",
-                              "Primary 3",
-                              "Primary 4",
-                              "Primary 5",
-                              "Primary 6",
-                              "JSS1",
-                              "JSS2",
-                              "JSS3",
-                              "SS1",
-                              "SS2",
-                              "SS3",
-                            ].map((g) => (
-                              <option key={g} value={g}>
-                                {g}
-                              </option>
-                            ))}
-                          </select>
-                        </FormControl>
-                        <FormMessage className="text-red-500" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
                     name="academicYear"
                     control={control}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Academic Year *</FormLabel>
-                        <FormControl>
-                          <select
-                            {...field}
-                            className="w-full rounded-md border px-3 py-2 text-sm"
-                          >
-                            <option value="">Select year</option>
-                            {["2025-2026", "2026-2027"].map((y) => (
-                              <option key={y} value={y}>
-                                {y}
-                              </option>
-                            ))}
-                          </select>
-                        </FormControl>
-                        <FormMessage className="text-red-500" />
-                      </FormItem>
-                    )}
+                    render={({ field }) => {
+                      // Generate academic years (current year to current year + 5)
+                      const currentYear = new Date().getFullYear();
+                      const academicYears = Array.from(
+                        { length: 5 },
+                        (_, i) => {
+                          const startYear = currentYear + i;
+                          return `${startYear}-${startYear + 1}`;
+                        }
+                      );
+
+                      return (
+                        <FormItem>
+                          <FormLabel required>Academic Year</FormLabel>
+                          <FormControl>
+                            <select
+                              {...field}
+                              className="w-full rounded-md border px-3 py-2 text-sm"
+                            >
+                              <option value="">Select year</option>
+                              {academicYears.map((year) => (
+                                <option key={year} value={year}>
+                                  {year}
+                                </option>
+                              ))}
+                            </select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
                   />
 
                   <FormField
@@ -484,9 +644,7 @@ export default function SchoolPaymentForm() {
                     control={control}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          Term <small className="text-background">*</small>
-                        </FormLabel>
+                        <FormLabel required>Term</FormLabel>
                         <FormControl>
                           <select
                             {...field}
@@ -502,7 +660,7 @@ export default function SchoolPaymentForm() {
                             )}
                           </select>
                         </FormControl>
-                        <FormMessage className="text-red-500" />
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -517,40 +675,73 @@ export default function SchoolPaymentForm() {
                   Payment Information
                 </h3>
 
-                {selectedFee && (
-                  <div className="mb-4 rounded-md border border-blue-200 bg-blue-50 p-4">
-                    <p className="text-sm text-gray-700">
-                      <strong>Selected Fee:</strong> {selectedFee.name}
-                    </p>
-                    <p className="mt-1 text-lg font-bold text-blue-900">
-                      ₦{selectedFee.amount.toLocaleString()}
-                    </p>
-                  </div>
-                )}
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <FormField
+                    control={control}
+                    name="feeType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel required>Fee Type</FormLabel>
+                        <FormControl>
+                          <select
+                            {...field}
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            <option value="">Select fee type</option>
+                            {feeTypes.map((fee) => (
+                              <option key={fee.name} value={fee.name}>
+                                {fee.name}
+                              </option>
+                            ))}
+                          </select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={control}
+                    name="amount"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Amount (₦)</FormLabel>
+                        <FormControl>
+                          {/* <Input
+                            {...field}
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            placeholder="Enter amount"
+                            onChange={(e) =>
+                              field.onChange(Number(e.target.value))
+                            }
+                          /> */}
 
-                <FormField
-                  name="feeType"
-                  control={control}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Fee Type *</FormLabel>
-                      <FormControl>
-                        <select
-                          {...field}
-                          className="w-full rounded-md border px-3 py-2 text-sm"
-                        >
-                          <option value="">Select fee type</option>
-                          {feeTypes.map((fee) => (
-                            <option key={fee.name} value={fee.name}>
-                              {fee.name} - ₦{fee.amount.toLocaleString()}
-                            </option>
-                          ))}
-                        </select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                          <Input
+                            type="text"
+                            placeholder="Enter amount (e.g., N1,000)"
+                            value={formattedAmount}
+                            onChange={(e) => {
+                              const inputValue = e.target.value;
+                              setFormattedAmount(inputValue);
+                              const numericValue = parseCurrency(inputValue);
+                              field.onChange(numericValue);
+                            }}
+                            onBlur={() => {
+                              const numericValue =
+                                parseCurrency(formattedAmount);
+                              if (numericValue > 0) {
+                                const formatted = formatCurrency(numericValue);
+                                setFormattedAmount(formatted);
+                              }
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </section>
 
               <hr className="border-gray-200" />
@@ -572,7 +763,7 @@ export default function SchoolPaymentForm() {
                           {...field}
                         />
                       </FormControl>
-                      <FormMessage className="text-red-500" />
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -585,7 +776,7 @@ export default function SchoolPaymentForm() {
                 variant="outline"
                 onClick={() => {
                   reset();
-                  setShowCalendar(false);
+                  setShowCalendar(null);
                   setErrorMessage(null);
                 }}
               >
@@ -593,10 +784,11 @@ export default function SchoolPaymentForm() {
               </Button>
 
               <Button
-                className="bg-blue-800 text-white"
-                variant="default"
                 type="submit"
+                className="w-full sm:w-auto"
                 disabled={isSubmitting}
+                aria-busy={isSubmitting}
+                aria-live="polite"
               >
                 {isSubmitting ? "Processing..." : "Proceed to Payment"}
               </Button>

@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-import Image from "../assets/school_building.jpg";
+import Image from "../assets/new/main_building.png";
 import proprietor from "../assets/proprietor.jpg";
 const AboutUs = () => {
   return (
@@ -79,8 +79,7 @@ const AboutUs = () => {
                   <span className="absolute bottom-0 left-0 w-16 h-2 bg-primary rounded-full"></span>
                 </h2>
                 <p className="text-slate-700 text-lg leading-relaxed font-serif">
-                  To create a unique secondary school experience for the boy
-                  child premised on Catholic Holistic formation
+                  To raise young men and women of competence and integrity.
                 </p>
               </div>
 
@@ -90,8 +89,7 @@ const AboutUs = () => {
                   <span className="absolute bottom-0 left-0 w-16 h-2 bg-primary rounded-full"></span>
                 </h2>
                 <p className="text-slate-700 text-lg leading-relaxed font-serif">
-                  To raise young men of competence and integrity as inspired by
-                  gospel values.
+                  To raise young men and women of competence and integrity.
                 </p>
               </div>
             </motion.div>
