@@ -27,11 +27,30 @@ export interface EnrollmentData {
   feeType: string;
   paymentMethod: string;
   amount: number;
+  amountInKobo?: number;
   paymentReference?: string;
   paymentStatus?: string;
 
   // Additional Information
   additionalInfo?: string;
+
+  //others
+  students?: Array<{
+    firstName: string;
+    lastName: string;
+    dob: string;
+    gender: string;
+    gradeLevel: string;
+    fees: Array<{
+      type: string;
+      amount: number;
+    }>;
+  }>;
+  fees?: Array<{
+    type: string;
+    amount: number;
+    studentName: string;
+  }>;
 
   // Timestamps
   createdAt?: string;

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useState, type Dispatch, type SetStateAction } from "react";
+import { useForm, useFieldArray, type Control } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import {
@@ -28,6 +28,140 @@ import { formatCurrency, parseCurrency } from "../../lib/helpers";
 
 const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || "";
 
+function StudentFeesSection({
+  studentIndex,
+  control,
+  feeTypes,
+  formattedAmounts,
+  setFormattedAmounts,
+}: {
+  studentIndex: number;
+  control: Control<FormValues>;
+  feeTypes: Array<{ name: string }>;
+  formattedAmounts: Record<string, string>;
+  setFormattedAmounts: Dispatch<SetStateAction<Record<string, string>>>;
+}) {
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: `students.${studentIndex}.fees`,
+  });
+
+  const addFee = () => {
+    append({ type: "", amount: 0 });
+  };
+
+  const removeFee = (feeIndex: number) => {
+    if (fields.length > 1) {
+      remove(feeIndex);
+    }
+  };
+
+  return (
+    <div className="mt-4">
+      {fields.map((feeField, feeIndex) => {
+        const formattedKey = `${studentIndex}-${feeField.id}`;
+        return (
+          <div
+            key={feeField.id}
+            className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-12"
+          >
+            <div className="sm:col-span-5">
+              <FormField
+                control={control}
+                name={`students.${studentIndex}.fees.${feeIndex}.type`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel required={feeIndex === 0}>Fee Type</FormLabel>
+                    <FormControl>
+                      <select
+                        {...field}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+                      >
+                        <option value="">Select fee type</option>
+                        {feeTypes.map((fee) => (
+                          <option key={fee.name} value={fee.name}>
+                            {fee.name}
+                          </option>
+                        ))}
+                      </select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="sm:col-span-5">
+              <FormField
+                control={control}
+                name={`students.${studentIndex}.fees.${feeIndex}.amount`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel required={feeIndex === 0}>Amount (₦)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        placeholder="Enter amount (e.g., N1,000)"
+                        value={formattedAmounts[formattedKey] || ""}
+                        onChange={(e) => {
+                          const inputValue = e.target.value;
+                          setFormattedAmounts((prev) => ({
+                            ...prev,
+                            [formattedKey]: inputValue,
+                          }));
+                          const numericValue = parseCurrency(inputValue);
+                          field.onChange(numericValue);
+                        }}
+                        onBlur={() => {
+                          const numericValue = parseCurrency(
+                            formattedAmounts[formattedKey] || "0"
+                          );
+                          if (numericValue > 0) {
+                            const formatted = formatCurrency(numericValue);
+                            setFormattedAmounts((prev) => ({
+                              ...prev,
+                              [formattedKey]: formatted,
+                            }));
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="flex items-end sm:col-span-2">
+              {feeIndex === 0 ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addFee}
+                  className="w-full bg-blue-800 text-white mt-4 sm:mt-0"
+                >
+                  Add Fee
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="text-red-500"
+                  onClick={() => removeFee(feeIndex)}
+                >
+                  Remove
+                </Button>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function SchoolPaymentForm() {
   const navigate = useNavigate();
   const [showCalendar, setShowCalendar] = useState<string | null>(null);
@@ -35,50 +169,66 @@ export default function SchoolPaymentForm() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [paymentReference, setPaymentReference] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [formattedAmount, setFormattedAmount] = useState("");
+  const [formattedAmounts, setFormattedAmounts] = useState<
+    Record<string, string>
+  >({});
+
+  const riser = {
+    email: "riserschool@gmail.com",
+  };
+
+  const defaultValues: FormValues = {
+    parentFirstName: "",
+    parentLastName: "",
+    parentEmail: "",
+    parentPhone: "",
+    students: [
+      {
+        firstName: "",
+        lastName: "",
+        dob: new Date(),
+        gender: "",
+        gradeLevel: "",
+        fees: [{ type: "", amount: 0 }],
+      },
+    ],
+    academicYear: "",
+    term: "",
+    additionalInfo: "",
+  };
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      parentFirstName: "",
-      parentLastName: "",
-      parentEmail: "",
-      parentPhone: "",
-      students: [
-        {
-          firstName: "",
-          lastName: "",
-          dob: new Date(),
-          gender: "",
-          gradeLevel: "",
-        },
-      ],
-      academicYear: "",
-      term: "",
-      feeType: "",
-      amount: 0,
-      additionalInfo: "",
-    },
+    defaultValues,
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const {
+    fields: studentFields,
+    append: appendStudent,
+    remove: removeStudent,
+  } = useFieldArray({
     control: form.control,
     name: "students",
   });
 
   const addStudent = () => {
-    append({
+    appendStudent({
       firstName: "",
       lastName: "",
       dob: new Date(),
       gender: "",
       gradeLevel: "",
+      fees: [{ type: "", amount: 0 }],
     });
   };
 
-  const removeStudent = (index: number) => {
-    if (fields.length > 1) {
-      remove(index);
+  const onInvalid = () => {
+    setErrorMessage("Please correct the highlighted fields and try again.");
+  };
+
+  const handleRemoveStudent = (index: number) => {
+    if (studentFields.length > 1) {
+      removeStudent(index);
     }
   };
 
@@ -92,16 +242,26 @@ export default function SchoolPaymentForm() {
     { name: "Full Package" },
   ];
 
-  const feeType = watch("feeType");
-  const amount = Number(watch("amount") || 0);
-  // const selectedFee = feeTypes.find((fee) => fee.name === feeType);
-
   const parentEmail = watch("parentEmail") || "";
   const parentFirstName = watch("parentFirstName");
   const parentLastName = watch("parentLastName");
   const students = watch("students") || [];
 
-  const amountInKobo = Math.round(amount * 100); // Convert to kobo for Paystack
+  const feeTypeSummary = Array.from(
+    new Set(
+      students
+        .flatMap((s) => s.fees || [])
+        .map((f) => f.type)
+        .filter(Boolean)
+    )
+  ).join(", ");
+
+  // Calculate total amount from all fees of all students
+  const totalAmount = students.reduce((total, student) => {
+    const studentFees =
+      student.fees?.reduce((sum, fee) => sum + (fee.amount || 0), 0) || 0;
+    return total + studentFees;
+  }, 0);
 
   const {
     reference: paystackReference,
@@ -111,12 +271,12 @@ export default function SchoolPaymentForm() {
   } = usePaystackCheckout({
     email: parentEmail,
     publicKey: PAYSTACK_PUBLIC_KEY,
-    amount: amountInKobo,
+    amount: totalAmount,
     metadata: {
       parent_name: `${parentFirstName} ${parentLastName}`.trim(),
       student_count: students.length,
-      fee_type: feeType,
-      amount: amount,
+      fee_type: feeTypeSummary,
+      amount: totalAmount,
       students_data: JSON.stringify(
         students.map((s) => ({
           name: `${s.firstName} ${s.lastName}`.trim(),
@@ -126,6 +286,14 @@ export default function SchoolPaymentForm() {
       ),
     },
   });
+
+  const calculateTotalFees = (students: FormValues["students"]) => {
+    return students.reduce((total, student) => {
+      const studentFees =
+        student.fees?.reduce((sum, fee) => sum + (fee.amount || 0), 0) || 0;
+      return total + studentFees;
+    }, 0);
+  };
 
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
@@ -137,11 +305,22 @@ export default function SchoolPaymentForm() {
       return;
     }
 
-    if (!parentEmail || !amount || amount <= 0) {
-      setErrorMessage("Please provide a valid email and amount.");
+    // Calculate total amount from all fees of all students
+    const totalAmount = calculateTotalFees(data.students);
+
+    if (totalAmount <= 0) {
+      setErrorMessage("Please add at least one fee with a valid amount.");
       setIsSubmitting(false);
       return;
     }
+
+    if (!data.parentEmail || !data.parentFirstName || !data.parentLastName) {
+      setErrorMessage("Please fill in all required parent information.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    const amountInKobo = Math.round(totalAmount * 100); // Convert to kobo for Paystack
 
     if (!isPaystackReady) {
       setErrorMessage("Payment initialization failed. Please try again.");
@@ -149,31 +328,54 @@ export default function SchoolPaymentForm() {
       return;
     }
 
+    // Prepare students data with their fees
+    const studentsData = data.students.map((student) => ({
+      firstName: student.firstName,
+      lastName: student.lastName,
+      dob: student.dob ? new Date(student.dob).toISOString() : "",
+      gender: student.gender,
+      gradeLevel: student.gradeLevel,
+      fees: student.fees || [],
+    }));
+
     const enrollmentData: EnrollmentData = {
       parentFirstName: data.parentFirstName,
       parentLastName: data.parentLastName,
       parentEmail: data.parentEmail,
       parentPhone: data.parentPhone,
-      studentFirstName: students[0]?.firstName || "",
-      studentLastName: students[0]?.lastName || "",
-      studentDob: students[0]?.dob
-        ? new Date(students[0].dob).toISOString()
-        : "",
-      studentGender: students[0]?.gender || "",
-      gradeLevel: students[0]?.gradeLevel || "",
+      studentFirstName: studentsData[0]?.firstName || "",
+      studentLastName: studentsData[0]?.lastName || "",
+      studentDob: studentsData[0]?.dob || "",
+      studentGender: studentsData[0]?.gender || "",
+      gradeLevel: studentsData[0]?.gradeLevel || "",
       academicYear: data.academicYear,
       term: data.term,
-      feeType: data.feeType,
-      amount: amountInKobo,
+      feeType: Array.from(
+        new Set(
+          data.students
+            .flatMap((s) => s.fees || [])
+            .map((f) => f.type)
+            .filter(Boolean)
+        )
+      ).join(", "),
+      amount: totalAmount,
+      amountInKobo,
       paymentMethod: "paystack",
       additionalInfo: data.additionalInfo || "",
+      students: studentsData,
+      fees: studentsData.flatMap((student) =>
+        student.fees.map((fee) => ({
+          type: fee.type,
+          amount: fee.amount,
+          studentName: `${student.firstName} ${student.lastName}`.trim(),
+        }))
+      ),
     };
 
     const pendingReference = paystackReference;
-
     const callbackFailSafe = setTimeout(() => {
       setIsSubmitting(false);
-    }, 60000); // 60 seconds
+    }, 60000);
 
     launchPaystack({
       onSuccess: async (response) => {
@@ -278,7 +480,7 @@ export default function SchoolPaymentForm() {
 
         <Form {...form}>
           <form
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={handleSubmit(onSubmit, onInvalid)}
             aria-labelledby="form-title"
             aria-describedby="form-description"
           >
@@ -397,7 +599,7 @@ export default function SchoolPaymentForm() {
 
               {/* Student Info */}
               <section>
-                <div className="mb-4 flex items-center justify-between">
+                <div className="mb-4 sm:flex items-center justify-between">
                   <div>
                     <h2 id="student-info-heading" className="text-lg font-bold">
                       Student Information
@@ -413,22 +615,23 @@ export default function SchoolPaymentForm() {
                     size="sm"
                     onClick={addStudent}
                     aria-label="Add another student"
+                    className="bg-blue-800 text-white mt-4 sm:mt-0"
                   >
                     + Add Another Student
                   </Button>
                 </div>
 
-                {fields.map((student, index) => (
+                {studentFields.map((student, index) => (
                   <div key={student.id} className="mb-8 rounded-lg border p-4">
                     <div className="mb-4 flex items-center justify-between">
                       <h4 className="font-medium">Student {index + 1}</h4>
-                      {fields.length > 1 && (
+                      {studentFields.length > 1 && (
                         <Button
                           type="button"
                           variant="ghost"
                           size="sm"
                           className="text-red-500 hover:bg-red-50"
-                          onClick={() => removeStudent(index)}
+                          onClick={() => handleRemoveStudent(index)}
                           aria-label={`Remove student ${index + 1}`}
                         >
                           Remove
@@ -510,7 +713,7 @@ export default function SchoolPaymentForm() {
                                         field.onChange(val);
                                         setShowCalendar("");
                                       }}
-                                      className="rounded-md border bg-white shadow-sm"
+                                      className="rounded-md border p-4 bg-white shadow-sm"
                                       captionLayout="dropdown"
                                     />
                                   </div>
@@ -669,80 +872,22 @@ export default function SchoolPaymentForm() {
 
               <hr className="border-gray-200" />
 
-              {/* Fee */}
-              <section>
-                <h3 className="mb-4 text-lg font-medium">
-                  Payment Information
-                </h3>
+              {studentFields.map((student, studentIndex) => (
+                <div key={student.id} className="mb-8 rounded-lg border p-4">
+                  {/* ... other student fields ... */}
 
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <FormField
+                  <h4 className="mb-2 font-medium">
+                    Fees for {students?.[studentIndex]?.firstName || "Student"}
+                  </h4>
+                  <StudentFeesSection
+                    studentIndex={studentIndex}
                     control={control}
-                    name="feeType"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel required>Fee Type</FormLabel>
-                        <FormControl>
-                          <select
-                            {...field}
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          >
-                            <option value="">Select fee type</option>
-                            {feeTypes.map((fee) => (
-                              <option key={fee.name} value={fee.name}>
-                                {fee.name}
-                              </option>
-                            ))}
-                          </select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={control}
-                    name="amount"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Amount (₦)</FormLabel>
-                        <FormControl>
-                          {/* <Input
-                            {...field}
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            placeholder="Enter amount"
-                            onChange={(e) =>
-                              field.onChange(Number(e.target.value))
-                            }
-                          /> */}
-
-                          <Input
-                            type="text"
-                            placeholder="Enter amount (e.g., N1,000)"
-                            value={formattedAmount}
-                            onChange={(e) => {
-                              const inputValue = e.target.value;
-                              setFormattedAmount(inputValue);
-                              const numericValue = parseCurrency(inputValue);
-                              field.onChange(numericValue);
-                            }}
-                            onBlur={() => {
-                              const numericValue =
-                                parseCurrency(formattedAmount);
-                              if (numericValue > 0) {
-                                const formatted = formatCurrency(numericValue);
-                                setFormattedAmount(formatted);
-                              }
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    feeTypes={feeTypes}
+                    formattedAmounts={formattedAmounts}
+                    setFormattedAmounts={setFormattedAmounts}
                   />
                 </div>
-              </section>
+              ))}
 
               <hr className="border-gray-200" />
 
@@ -770,7 +915,36 @@ export default function SchoolPaymentForm() {
               </section>
             </div>
 
-            <div className="flex justify-between border-t bg-slate-50 p-6">
+            <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mx-6 my-6 rounded">
+              <div className="flex items-start">
+                <div className="flex-shrink-0">
+                  <svg
+                    className="h-5 w-5 text-blue-600"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h2a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-blue-700">
+                    Need help with payment? Contact our support team at{" "}
+                    <a
+                      href={`mailto:${riser.email}?subject=Payment%20Inquiry`}
+                      className="font-medium text-blue-800 underline hover:text-blue-600 transition-colors"
+                    >
+                      {riser.email}
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-between border-t bg-slate-50 p-6">
               <Button
                 type="button"
                 variant="outline"
@@ -780,15 +954,13 @@ export default function SchoolPaymentForm() {
                   setErrorMessage(null);
                 }}
               >
-                Cancel
+                Reset Form
               </Button>
-
               <Button
                 type="submit"
-                className="w-full sm:w-auto"
+                className="w-full sm:w-auto bg-blue-800 text-white hover:bg-blue-600"
                 disabled={isSubmitting}
                 aria-busy={isSubmitting}
-                aria-live="polite"
               >
                 {isSubmitting ? "Processing..." : "Proceed to Payment"}
               </Button>

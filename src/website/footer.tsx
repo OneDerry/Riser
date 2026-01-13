@@ -197,7 +197,7 @@ const Footer = () => {
               <Button
                 variant="default"
                 size="lg"
-                onClick={() => handleSendEmail}
+                onClick={() => handleSendEmail()}
                 className="rounded text-white bg-blue-800 flex items-center justify-center"
               >
                 Send

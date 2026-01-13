@@ -10,6 +10,17 @@ interface SheetDBResponse {
 
 export type SubmitEnrollmentPayload = EnrollmentData;
 
+const toSheetDbRow = (payload: SubmitEnrollmentPayload) => {
+  const { students, fees, ...rest } = payload;
+
+  return {
+    ...rest,
+    studentCount: students?.length ?? 0,
+    studentsJson: students ? JSON.stringify(students) : "",
+    feesJson: fees ? JSON.stringify(fees) : "",
+  };
+};
+
 export const paymentsApi = api.injectEndpoints({
   endpoints: (build) => ({
     submitEnrollment: build.mutation<
@@ -25,7 +36,7 @@ export const paymentsApi = api.injectEndpoints({
         body: {
           data: [
             {
-              ...payload,
+              ...toSheetDbRow(payload),
               createdAt: payload.createdAt || new Date().toISOString(),
               updatedAt: new Date().toISOString(),
               paymentStatus:

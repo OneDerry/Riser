@@ -1,16 +1,22 @@
 import { z } from "zod";
 
-const studentSchema = z.object({
-  firstName: z
-    .string()
-    .min(2, { message: "First name must be at least 2 characters" }),
-  lastName: z
-    .string()
-    .min(2, { message: "Last name must be at least 2 characters" }),
-  dob: z.date({ required_error: "Please select a date of birth" }),
-  gender: z.string({ required_error: "Please select a gender" }),
-  gradeLevel: z.string({ required_error: "Please select a grade level" }),
-});
+// const feeSchema = z.object({
+//   type: z.string().min(1, { message: "Fee type is required" }),
+//   amount: z.number().min(0, { message: "Amount must be a positive number" }),
+// });
+
+// const studentSchema = z.object({
+//   firstName: z
+//     .string()
+//     .min(2, { message: "First name must be at least 2 characters" }),
+//   lastName: z
+//     .string()
+//     .min(2, { message: "Last name must be at least 2 characters" }),
+//   dob: z.date({ required_error: "Please select a date of birth" }),
+//   gender: z.string({ required_error: "Please select a gender" }),
+//   gradeLevel: z.string({ required_error: "Please select a grade level" }),
+//   fees: z.array(feeSchema).min(1, { message: "At least one fee is required" }),
+// });
 
 // Define grade levels as a constant to ensure type safety
 export const GRADE_LEVELS = [
@@ -43,24 +49,27 @@ export const formSchema = z.object({
 
   // Students Information
   students: z
-    .array(studentSchema)
-    .min(1, { message: "At least one student is required" }),
-  dob: z.date({ required_error: "Please select a date of birth" }),
-  gender: z.string({ required_error: "Please select a gender" }),
-  grade_level: z.string({ required_error: "Please select a grade level" }),
-
+    .array(
+      z.object({
+        firstName: z.string().min(1, "First name is required"),
+        lastName: z.string().min(1, "Last name is required"),
+        dob: z.date(),
+        gender: z.string().min(1, "Gender is required"),
+        gradeLevel: z.string().min(1, "Grade level is required"),
+        fees: z
+          .array(
+            z.object({
+              type: z.string().min(1, "Fee type is required"),
+              amount: z.number().min(0.01, "Amount must be greater than 0"),
+            })
+          )
+          .min(1, "At least one fee is required"),
+      })
+    )
+    .min(1, "At least one student is required"),
   // Enrollment Information
   academicYear: z.string({ required_error: "Please select an academic year" }),
   term: z.string({ required_error: "Please select a term" }),
-
-  // Payment Information
-  feeType: z.string({ required_error: "Please select a fee type" }),
-  amount: z
-    .number({
-      required_error: "Please enter an amount",
-      invalid_type_error: "Amount must be a number",
-    })
-    .min(1, { message: "Amount must be greater than 0" }),
 
   // Additional Information
   additionalInfo: z.string().optional(),
