@@ -74,7 +74,7 @@ const Footer = () => {
             <ul className="space-y-2">
               <li>
                 <Link
-                  to="#"
+                  to="/#admission"
                   className="text-slate-300 hover:text-blue-400 transition-colors flex items-center group"
                 >
                   <span>Admissions</span>

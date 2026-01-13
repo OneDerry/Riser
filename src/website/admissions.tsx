@@ -30,7 +30,7 @@ const Admissions = () => {
           </div>
 
           <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-center bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 bg-clip-text text-transparent pb-2">
-            2025/2026 ADMISSION IS NOW OPEN
+            2026/2027 ADMISSION IS NOW OPEN
           </h1>
 
           <div className="mt-6 max-w-2xl mx-auto">

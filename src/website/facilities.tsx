@@ -4,11 +4,11 @@ import {
   CheckCircle,
   FlaskRoundIcon as Flask,
   Music,
-  Stethoscope,
   Trophy,
   BookOpen,
   Utensils,
   HandCoins,
+  Library,
 } from "lucide-react";
 import { Card } from "../shared/common";
 
@@ -27,10 +27,12 @@ const Facilities = () => {
       icon: <Music className="h-6 w-6 text-primary" />,
     },
     {
-      title: "Medical Care",
-      description: "A well equipped clinic with a residential doctor.",
-      icon: <Stethoscope className="h-6 w-6 text-primary" />,
+      title: "Library",
+      description:
+        "A well-stocked library that supports research, reading, and independent learning.",
+      icon: <Library className="h-6 w-6 text-primary" />,
     },
+
     {
       title: "Sports Facilities",
       description:

@@ -40,17 +40,13 @@ const AboutUs = () => {
                   <span className="absolute bottom-0 left-0 w-16 h-2 bg-primary rounded-full"></span>
                 </h2>
                 <p className="text-slate-700 text-lg leading-relaxed font-serif">
-                  At Riser, our emphasis is not just education but formation.
-                  Education is but a part of our formation process. Our
-                  formation process has Christian values as its foundation.
-                  This, therefore, makes the destination of our mission
-                  different. Passing external examinations and qualifying for
-                  admission into tertiary institutions is not all we set out to
-                  achieve. Rather the destination of our formation process is
-                  the holistic development of the human person in the light of
-                  Christian value. Therefore, the popular saying “their
-                  destination our mission.” Please feel free to go through our
-                  website and leave a message for us on our contact page.
+                  At Riser, education is more than academics. We focus on the
+                  holistic development of every student, nurturing their
+                  knowledge, character, and life skills. Our goal is to raise
+                  confident, capable, and responsible individuals who are
+                  prepared for both school and life. We invite you to explore
+                  our website and connect with us through our contact page to
+                  learn more about the Riser experience.
                   <br />
                   Thank you.
                   <br />
@@ -79,7 +75,9 @@ const AboutUs = () => {
                   <span className="absolute bottom-0 left-0 w-16 h-2 bg-primary rounded-full"></span>
                 </h2>
                 <p className="text-slate-700 text-lg leading-relaxed font-serif">
-                  To raise young men and women of competence and integrity.
+                  To provide a nurturing and disciplined learning environment
+                  that develops academically excellent, morally grounded, and
+                  socially responsible young men and women.
                 </p>
               </div>
 
@@ -89,7 +87,9 @@ const AboutUs = () => {
                   <span className="absolute bottom-0 left-0 w-16 h-2 bg-primary rounded-full"></span>
                 </h2>
                 <p className="text-slate-700 text-lg leading-relaxed font-serif">
-                  To raise young men and women of competence and integrity.
+                  To be a leading institution recognized for shaping confident,
+                  ethical, and competent leaders who positively impact their
+                  communities and the nation.
                 </p>
               </div>
             </motion.div>
