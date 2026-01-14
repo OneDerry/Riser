@@ -1,4 +1,4 @@
-import { useState, type Dispatch, type SetStateAction } from "react";
+import { useState, useEffect, type Dispatch, type SetStateAction } from "react";
 import { useForm, useFieldArray, type Control } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
@@ -25,6 +25,7 @@ import { useSubmitEnrollmentMutation } from "../../app/features/payments.api";
 import { EnrollmentData } from "../../app/services/sheet_db_service";
 import { toast } from "sonner";
 import { formatCurrency, parseCurrency } from "../../lib/helpers";
+import { useNigeriaStates } from "../../hooks/use_nigeria_states";
 
 const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || "";
 
@@ -182,6 +183,10 @@ export default function SchoolPaymentForm() {
     parentLastName: "",
     parentEmail: "",
     parentPhone: "",
+    relationship_to_child: "",
+    address: "",
+    state_of_origin: "",
+    lga: "",
     students: [
       {
         firstName: "",
@@ -232,8 +237,24 @@ export default function SchoolPaymentForm() {
     }
   };
 
-  const { control, handleSubmit, reset, watch } = form;
+  const { control, handleSubmit, reset, watch, setValue } = form;
   const [submitEnrollment] = useSubmitEnrollmentMutation();
+
+  // Use the Nigeria states API hook
+  const { states, lgas, isLoadingStates, isLoadingLGAs, error, fetchLGAs } =
+    useNigeriaStates();
+
+  // Watch state of origin to fetch LGAs when it changes
+  const selectedState = watch("state_of_origin");
+
+  useEffect(() => {
+    if (selectedState) {
+      setValue("lga", ""); // Clear LGA when state changes
+      fetchLGAs(selectedState); // Fetch LGAs for the selected state
+    } else {
+      setValue("lga", ""); // Clear LGA if no state is selected
+    }
+  }, [selectedState, setValue, fetchLGAs]);
 
   const feeTypes = [
     { name: "Tuition Fee" },
@@ -343,10 +364,14 @@ export default function SchoolPaymentForm() {
       parentLastName: data.parentLastName,
       parentEmail: data.parentEmail,
       parentPhone: data.parentPhone,
+      relationship_to_child: data.relationship_to_child,
+      address: data.address,
       studentFirstName: studentsData[0]?.firstName || "",
       studentLastName: studentsData[0]?.lastName || "",
       studentDob: studentsData[0]?.dob || "",
       studentGender: studentsData[0]?.gender || "",
+      State: data.state_of_origin,
+      Lga: data.lga,
       gradeLevel: studentsData[0]?.gradeLevel || "",
       academicYear: data.academicYear,
       term: data.term,
@@ -592,7 +617,48 @@ export default function SchoolPaymentForm() {
                       </FormItem>
                     )}
                   />
+
+                  <FormField
+                    name="relationship_to_child"
+                    control={control}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel required>Relationship to Child</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter relationship"
+                            aria-required="true"
+                            aria-invalid={
+                              !!form.formState.errors.relationship_to_child
+                            }
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
+                <FormField
+                  name="address"
+                  control={control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel required className="mt-4">
+                        Address
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Enter your home address"
+                          aria-required="true"
+                          aria-invalid={!!form.formState.errors.address}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </section>
 
               <hr className="border-gray-200" />
@@ -723,6 +789,86 @@ export default function SchoolPaymentForm() {
                             <FormMessage />
                           </FormItem>
                         )}
+                      />
+
+                      <FormField
+                        name="state_of_origin"
+                        control={control}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel required>State of Origin</FormLabel>
+                            <FormControl>
+                              <select
+                                {...field}
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+                                aria-required="true"
+                                aria-invalid={
+                                  !!form.formState.errors.state_of_origin
+                                }
+                                disabled={isLoadingStates}
+                              >
+                                <option value="">
+                                  {isLoadingStates
+                                    ? "Loading states..."
+                                    : "Select state"}
+                                </option>
+                                {states.map((state) => (
+                                  <option key={state} value={state}>
+                                    {state}
+                                  </option>
+                                ))}
+                              </select>
+                            </FormControl>
+                            <FormMessage />
+                            {error && (
+                              <p className="text-sm text-red-500 mt-1">
+                                Failed to load states. Please try again.
+                              </p>
+                            )}
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        name="lga"
+                        control={control}
+                        render={({ field }) => {
+                          const selectedState = watch("state_of_origin");
+
+                          return (
+                            <FormItem>
+                              <FormLabel required>LGA</FormLabel>
+                              <FormControl>
+                                <select
+                                  {...field}
+                                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+                                  aria-required="true"
+                                  aria-invalid={!!form.formState.errors.lga}
+                                  disabled={!selectedState || isLoadingLGAs}
+                                >
+                                  <option value="">
+                                    {!selectedState
+                                      ? "Select state first"
+                                      : isLoadingLGAs
+                                      ? "Loading LGAs..."
+                                      : "Select LGA"}
+                                  </option>
+                                  {lgas.map((lga) => (
+                                    <option key={lga} value={lga}>
+                                      {lga}
+                                    </option>
+                                  ))}
+                                </select>
+                              </FormControl>
+                              <FormMessage />
+                              {error && selectedState && (
+                                <p className="text-sm text-red-500 mt-1">
+                                  Failed to load LGAs. Please try again.
+                                </p>
+                              )}
+                            </FormItem>
+                          );
+                        }}
                       />
 
                       <FormField

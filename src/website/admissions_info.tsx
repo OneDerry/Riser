@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 
-import background from "../assets/school_building.jpg";
+import background from "../assets/new/main_building.png";
 export default function AdmissionsInfo() {
   return (
     <div
@@ -17,7 +17,7 @@ export default function AdmissionsInfo() {
         </Link>
       </div>
 
-      <div className="bg-white w-[90%] sm:w-[60%] mx-auto rounded-lg shadow-lg overflow-hidden my-8">
+      <div className="bg-white w-full sm:w-[90%] mx-auto rounded-lg shadow-lg overflow-hidden my-8">
         <div className="bg-slate-50 border-b px-6 py-4">
           <h2 className="text-2xl font-bold text-gray-800">Admissions</h2>
           <p className="text-gray-600 mt-1">
@@ -265,16 +265,16 @@ export default function AdmissionsInfo() {
           </div>
         </div>
 
-        <div className="flex justify-between border-t p-6 bg-slate-50">
+        <div className="flex gap-4 flex-col sm:flex-row justify-between border-t p-6 bg-slate-50">
           <Link
             to="/"
-            className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="px-4 flex items-center justify-center py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Back to Home
           </Link>
           <Link
             to="/enroll"
-            className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="px-4 flex items-center justify-center py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Apply Now
           </Link>

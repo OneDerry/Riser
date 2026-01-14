@@ -11,12 +11,16 @@ export interface EnrollmentData {
   parentLastName: string;
   parentEmail: string;
   parentPhone: string;
+  relationship_to_child: string;
+  address: string;
 
   // Student Information
   studentFirstName: string;
   studentLastName: string;
   studentDob: string; // ISO date string
   studentGender: string;
+  State: string;
+  Lga: string;
 
   // Enrollment Information
   gradeLevel: string;

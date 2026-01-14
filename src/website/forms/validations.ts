@@ -47,6 +47,11 @@ export const formSchema = z.object({
     .string()
     .min(10, { message: "Please enter a valid phone number" }),
 
+  relationship_to_child: z.string().min(1, "Relationship is required"),
+  address: z.string().min(1, "Address is required"),
+  state_of_origin: z.string().min(1, "State of origin is required"),
+  lga: z.string().min(1, "LGA is required"),
+
   // Students Information
   students: z
     .array(
