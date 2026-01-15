@@ -26,6 +26,7 @@ import { EnrollmentData } from "../../app/services/sheet_db_service";
 import { toast } from "sonner";
 import { useNigeriaStates } from "../../hooks/use_nigeria_states";
 import StudentFeesSection from "./studentFeesSection";
+import { RelationshipToChild } from "../../lib/types";
 
 const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || "";
 
@@ -45,6 +46,7 @@ export default function SchoolPaymentForm() {
   };
 
   const defaultValues: FormValues = {
+    parentPrefix: "",
     parentFirstName: "",
     parentLastName: "",
     parentEmail: "",
@@ -115,10 +117,10 @@ export default function SchoolPaymentForm() {
 
   useEffect(() => {
     if (selectedState) {
-      setValue("lga", ""); // Clear LGA when state changes
-      fetchLGAs(selectedState); // Fetch LGAs for the selected state
+      setValue("lga", "");
+      fetchLGAs(selectedState);
     } else {
-      setValue("lga", ""); // Clear LGA if no state is selected
+      setValue("lga", "");
     }
   }, [selectedState, setValue, fetchLGAs]);
 
@@ -130,6 +132,7 @@ export default function SchoolPaymentForm() {
   ];
 
   const parentEmail = watch("parentEmail") || "";
+  const parentPrefix = watch("parentPrefix");
   const parentFirstName = watch("parentFirstName");
   const parentLastName = watch("parentLastName");
   const students = watch("students") || [];
@@ -160,7 +163,8 @@ export default function SchoolPaymentForm() {
     publicKey: PAYSTACK_PUBLIC_KEY,
     amount: totalAmount,
     metadata: {
-      parent_name: `${parentFirstName} ${parentLastName}`.trim(),
+      parent_name:
+        `${parentPrefix} ${parentFirstName} ${parentLastName}`.trim(),
       student_count: students.length,
       fee_type: feeTypeSummary,
       amount: totalAmount,
@@ -225,20 +229,17 @@ export default function SchoolPaymentForm() {
       fees: student.fees || [],
     }));
 
+    // Simplified data structure with JSON for students/fees
     const enrollmentData: EnrollmentData = {
+      parentPrefix: data.parentPrefix,
       parentFirstName: data.parentFirstName,
       parentLastName: data.parentLastName,
       parentEmail: data.parentEmail,
       parentPhone: data.parentPhone,
       relationship_to_child: data.relationship_to_child,
       address: data.address,
-      studentFirstName: studentsData[0]?.firstName || "",
-      studentLastName: studentsData[0]?.lastName || "",
-      studentDob: studentsData[0]?.dob || "",
-      studentGender: studentsData[0]?.gender || "",
       State: data.state_of_origin,
       Lga: data.lga,
-      gradeLevel: studentsData[0]?.gradeLevel || "",
       academicYear: data.academicYear,
       term: data.term,
       feeType: Array.from(
@@ -400,6 +401,28 @@ export default function SchoolPaymentForm() {
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <FormField
+                    name="parentPrefix"
+                    control={control}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel required>Prefix</FormLabel>
+                        <FormControl>
+                          <select
+                            {...field}
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+                          >
+                            <option value="">Select prefix</option>
+                            <option value="Mr">Mr</option>
+                            <option value="Mrs">Mrs</option>
+                            <option value="Miss">Miss</option>
+                            <option value="Ms">Ms</option>
+                          </select>
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
                     name="parentFirstName"
                     control={control}
                     render={({ field }) => (
@@ -491,14 +514,24 @@ export default function SchoolPaymentForm() {
                       <FormItem>
                         <FormLabel required>Relationship to Child</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="Enter relationship"
+                          <select
+                            {...field}
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
                             aria-required="true"
                             aria-invalid={
                               !!form.formState.errors.relationship_to_child
                             }
-                            {...field}
-                          />
+                          >
+                            <option value="">Select relationship</option>
+                            {RelationshipToChild.map((relationship) => (
+                              <option
+                                key={relationship.name}
+                                value={relationship.name}
+                              >
+                                {relationship.name}
+                              </option>
+                            ))}
+                          </select>
                         </FormControl>
                         <FormMessage />
                       </FormItem>

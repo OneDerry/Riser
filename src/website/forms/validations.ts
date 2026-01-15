@@ -34,6 +34,7 @@ export const GRADE_LEVELS = [
 
 export const formSchema = z.object({
   // Parent Information
+  parentPrefix: z.string(),
   parentFirstName: z
     .string()
     .min(2, { message: "First name must be at least 2 characters" }),

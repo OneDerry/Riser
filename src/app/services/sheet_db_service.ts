@@ -7,6 +7,7 @@ const SHEETDB_API_URL =
 
 export interface EnrollmentData {
   // Parent Information
+  parentPrefix: string;
   parentFirstName: string;
   parentLastName: string;
   parentEmail: string;
@@ -14,16 +15,11 @@ export interface EnrollmentData {
   relationship_to_child: string;
   address: string;
 
-  // Student Information
-  studentFirstName: string;
-  studentLastName: string;
-  studentDob: string; // ISO date string
-  studentGender: string;
+  // Location Information
   State: string;
   Lga: string;
 
   // Enrollment Information
-  gradeLevel: string;
   academicYear: string;
   term: string;
 
@@ -38,7 +34,7 @@ export interface EnrollmentData {
   // Additional Information
   additionalInfo?: string;
 
-  //others
+  // Student and Fee Data (JSON arrays)
   students?: Array<{
     firstName: string;
     lastName: string;
@@ -112,14 +108,11 @@ export const saveToSheetDB = async (
   }
 };
 
-// Update enrollment data (e.g., after payment confirmation)
 export const updateSheetDB = async (
   reference: string,
   updates: Partial<EnrollmentData>
 ): Promise<{ success: boolean; message: string }> => {
   try {
-    // SheetDB update requires finding the record first
-    // For now, we'll use PATCH to update by payment reference
     const response = await fetch(
       `${SHEETDB_API_URL}/paymentReference/${reference}`,
       {
