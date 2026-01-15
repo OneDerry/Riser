@@ -123,7 +123,10 @@ const Navbar = () => {
             <NavLink
               to={item.url}
               key={item.name}
-              onClick={(e) => handleNavClick(e, item.url)}
+              onClick={(e) => {
+                handleNavClick(e, item.url);
+                toggleMenu();
+              }}
               className={({ isActive }) =>
                 cn(
                   "text-sm font-normal capitalize transition-colors hover:text-primary cursor-pointer",
@@ -157,7 +160,10 @@ const Navbar = () => {
               <NavLink
                 to={item.url}
                 key={item.name}
-                onClick={(e) => handleNavClick(e, item.url)}
+                onClick={(e) => {
+                  handleNavClick(e, item.url);
+                  toggleMenu();
+                }}
                 className={({ isActive }) =>
                   cn(
                     "text-sm font-normal capitalize transition-colors hover:text-primary cursor-pointer",

@@ -361,7 +361,7 @@ export default function SchoolPaymentFormSimplified() {
   return (
     <div
       style={{ backgroundImage: `url(${background})` }}
-      className="relative min-h-screen bg-cover bg-center bg-no-repeat px-6 py-12"
+      className="relative min-h-screen bg-cover bg-center bg-no-repeat px-6 sm:px-72 py-12"
     >
       <div className="absolute inset-0 bg-black/30 z-0" />
 
@@ -377,7 +377,7 @@ export default function SchoolPaymentFormSimplified() {
         </Button>
       </div>
 
-      <div className="relative z-10 mx-auto mt-14 w-full p-2 rounded-lg bg-slate-50 shadow-lg sm:w-[90%]">
+      <div className="relative z-10 mx-auto  mt-14 w-full p-2 rounded-lg bg-slate-50 shadow-lg sm:w-[90%]">
         <div className="border-b bg-slate-50 px-6 py-4">
           <h1 className="text-2xl font-bold text-gray-800">
             School Fee Payment & Enrollment
@@ -432,7 +432,7 @@ export default function SchoolPaymentFormSimplified() {
                       label="First Name"
                       placeholder="Enter first name"
                       required
-                      className="col-span-2"
+                      className="col-span-2 w-full"
                     />
                   </div>
 

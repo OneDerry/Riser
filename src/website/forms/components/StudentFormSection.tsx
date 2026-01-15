@@ -50,8 +50,8 @@ export default function StudentFormSection({
   };
 
   return (
-    <div className="mb-8 rounded-lg border p-4">
-      <div className="mb-4 flex items-center justify-between">
+    <div className="mb-8 rounded-lg border p-4 overflow-x-hidden">
+      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h4 className="font-medium">Student {index + 1}</h4>
         {canRemove && (
           <button
@@ -64,7 +64,7 @@ export default function StudentFormSection({
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 sm:gap-4 sm:grid-cols-2">
         <FormInput
           control={control}
           name={`students.${index}.firstName`}
@@ -101,12 +101,12 @@ export default function StudentFormSection({
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background cursor-pointer mt-1"
             />
             {showCalendar === `${index}-dob` && (
-              <div className="absolute z-10 mt-1">
+              <div className="absolute left-0 right-0 z-10 mt-1 sm:w-auto">
                 <Calendar
                   mode="single"
                   selected={new Date()}
                   onSelect={() => setShowCalendar(null)}
-                  className="rounded-md border p-4 w-60 sm:w-72 bg-white shadow-sm"
+                  className="rounded-md border p-4 w-full bg-white shadow-sm"
                   captionLayout="dropdown"
                 />
               </div>
@@ -172,8 +172,8 @@ export default function StudentFormSection({
           </>
         )}
 
-        <div className="grid grid-cols-3 gap-4 col-span-2">
-          <div className="col-span-2">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:col-span-2">
+          <div className="sm:col-span-2">
             <FormInput
               control={control}
               name={`students.${index}.studentAddress`}
@@ -187,7 +187,7 @@ export default function StudentFormSection({
             control={control}
             name={`students.${index}.sameAsParent`}
             label="Same as Parent Address"
-            className="mt-4"
+            className="sm:mt-4"
           />
         </div>
 
@@ -204,21 +204,24 @@ export default function StudentFormSection({
           label="Medical Conditions (Optional)"
           placeholder="List any medical conditions"
         />
+        <div>
+          <FormInput
+            control={control}
+            name={`students.${index}.emergencyContactName`}
+            label="Emergency Contact Name"
+            placeholder="Enter name (if different from parent)"
+          />
+        </div>
 
-        <FormInput
-          control={control}
-          name={`students.${index}.emergencyContactName`}
-          label="Emergency Contact Name"
-          placeholder="Enter emergency contact name (if different from parent)"
-        />
-
-        <FormInput
-          control={control}
-          name={`students.${index}.emergencyContactPhone`}
-          label="Emergency Contact Phone"
-          type="tel"
-          placeholder="Enter emergency contact phone (if different from parent)"
-        />
+        <div>
+          <FormInput
+            control={control}
+            name={`students.${index}.emergencyContactPhone`}
+            label="Emergency Contact Phone"
+            type="tel"
+            placeholder="Enter phone (if different from parent)"
+          />
+        </div>
       </div>
     </div>
   );
