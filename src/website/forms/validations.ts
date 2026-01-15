@@ -58,10 +58,22 @@ export const formSchema = z.object({
     .array(
       z.object({
         firstName: z.string().min(1, "First name is required"),
+        middleName: z.string().optional(),
         lastName: z.string().min(1, "Last name is required"),
         dob: z.date(),
         gender: z.string().min(1, "Gender is required"),
         gradeLevel: z.string().min(1, "Grade level is required"),
+        studentType: z.string().min(1, "Student type is required"),
+        studentState: z.string().min(1, "Student state is required"),
+        studentLga: z.string().min(1, "Student LGA is required"),
+        studentAddress: z.string().optional(),
+        sameAsParent: z.boolean().optional(),
+        previousSchool: z.string().optional(),
+        transferReason: z.string().optional(),
+        allergies: z.string().optional(),
+        medicalConditions: z.string().optional(),
+        emergencyContactName: z.string().optional(),
+        emergencyContactPhone: z.string().optional(),
         fees: z
           .array(
             z.object({

@@ -213,7 +213,7 @@ const Footer = () => {
               © {new Date().getFullYear()} Riser School, Effurun. All rights
               reserved.
             </p>
-            <div className="flex gap-6">
+            {/* <div className="flex gap-6">
               <Link
                 to="#"
                 className="text-slate-400 hover:text-primary text-sm transition-colors"
@@ -226,7 +226,7 @@ const Footer = () => {
               >
                 Terms & Conditions
               </Link>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

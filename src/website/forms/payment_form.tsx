@@ -24,7 +24,7 @@ import { usePaystackCheckout } from "../../paystack/use_paystack_checkout";
 import { useSubmitEnrollmentMutation } from "../../app/features/payments.api";
 import { EnrollmentData } from "../../app/services/sheet_db_service";
 import { toast } from "sonner";
-import { useNigeriaStates } from "../../hooks/use_nigeria_states";
+import { getStates, getLGAsByState } from "../../data/nigeria-states-lgas";
 import StudentFeesSection from "./studentFeesSection";
 import { RelationshipToChild } from "../../lib/types";
 
@@ -58,10 +58,22 @@ export default function SchoolPaymentForm() {
     students: [
       {
         firstName: "",
+        middleName: "",
         lastName: "",
         dob: new Date(),
         gender: "",
         gradeLevel: "",
+        studentType: "",
+        studentState: "",
+        studentLga: "",
+        studentAddress: "",
+        sameAsParent: false,
+        previousSchool: "",
+        transferReason: "",
+        allergies: "",
+        medicalConditions: "",
+        emergencyContactName: "",
+        emergencyContactPhone: "",
         fees: [{ type: "", amount: 0 }],
       },
     ],
@@ -87,10 +99,22 @@ export default function SchoolPaymentForm() {
   const addStudent = () => {
     appendStudent({
       firstName: "",
+      middleName: "",
       lastName: "",
       dob: new Date(),
       gender: "",
       gradeLevel: "",
+      studentType: "",
+      studentState: "",
+      studentLga: "",
+      studentAddress: "",
+      sameAsParent: false,
+      previousSchool: "",
+      transferReason: "",
+      allergies: "",
+      medicalConditions: "",
+      emergencyContactName: "",
+      emergencyContactPhone: "",
       fees: [{ type: "", amount: 0 }],
     });
   };
@@ -108,9 +132,9 @@ export default function SchoolPaymentForm() {
   const { control, handleSubmit, reset, watch, setValue } = form;
   const [submitEnrollment] = useSubmitEnrollmentMutation();
 
-  // Use the Nigeria states API hook
-  const { states, lgas, isLoadingStates, isLoadingLGAs, error, fetchLGAs } =
-    useNigeriaStates();
+  // Use static Nigeria states data
+  const states = getStates();
+  const [lgas, setLgas] = useState<string[]>([]);
 
   // Watch state of origin to fetch LGAs when it changes
   const selectedState = watch("state_of_origin");
@@ -118,11 +142,12 @@ export default function SchoolPaymentForm() {
   useEffect(() => {
     if (selectedState) {
       setValue("lga", "");
-      fetchLGAs(selectedState);
+      setLgas(getLGAsByState(selectedState));
     } else {
       setValue("lga", "");
+      setLgas([]);
     }
-  }, [selectedState, setValue, fetchLGAs]);
+  }, [selectedState, setValue]);
 
   const feeTypes = [
     { name: "Tuition Fee" },
@@ -170,7 +195,9 @@ export default function SchoolPaymentForm() {
       amount: totalAmount,
       students_data: JSON.stringify(
         students.map((s) => ({
-          name: `${s.firstName} ${s.lastName}`.trim(),
+          name: `${s.firstName} ${s.middleName ? s.middleName + " " : ""}${
+            s.lastName
+          }`.trim(),
           grade: s.gradeLevel,
           gender: s.gender,
         }))
@@ -222,10 +249,24 @@ export default function SchoolPaymentForm() {
     // Prepare students data with their fees
     const studentsData = data.students.map((student) => ({
       firstName: student.firstName,
+      middleName: student.middleName || "",
       lastName: student.lastName,
       dob: student.dob ? new Date(student.dob).toISOString() : "",
       gender: student.gender,
       gradeLevel: student.gradeLevel,
+      studentType: student.studentType,
+      studentState: student.studentState || "",
+      studentLga: student.studentLga || "",
+      studentAddress: student.sameAsParent
+        ? data.address
+        : student.studentAddress || "",
+      sameAsParent: student.sameAsParent || false,
+      previousSchool: student.previousSchool || "",
+      transferReason: student.transferReason || "",
+      allergies: student.allergies || "",
+      medicalConditions: student.medicalConditions || "",
+      emergencyContactName: student.emergencyContactName || "",
+      emergencyContactPhone: student.emergencyContactPhone || "",
       fees: student.fees || [],
     }));
 
@@ -259,7 +300,9 @@ export default function SchoolPaymentForm() {
         student.fees.map((fee) => ({
           type: fee.type,
           amount: fee.amount,
-          studentName: `${student.firstName} ${student.lastName}`.trim(),
+          studentName: `${student.firstName} ${
+            student.middleName ? student.middleName + " " : ""
+          }${student.lastName}`.trim(),
         }))
       ),
     };
@@ -326,17 +369,30 @@ export default function SchoolPaymentForm() {
             </p>
           )}
         </div>
-        <Button
-          className="mt-6"
-          onClick={() => {
-            setIsSuccess(false);
-            setPaymentReference(null);
-            setErrorMessage(null);
-          }}
-          aria-label="Make another payment"
-        >
-          Make Another Payment
-        </Button>
+        <div className="flex items-center justify-between">
+          <Button
+            className="mt-6"
+            onClick={() => {
+              setIsSuccess(false);
+              setPaymentReference(null);
+              setErrorMessage(null);
+            }}
+            aria-label="Make another payment"
+          >
+            Make Another Payment
+          </Button>
+          <Button
+            className="mt-6"
+            onClick={() => {
+              setIsSuccess(false);
+              setPaymentReference(null);
+              setErrorMessage(null);
+            }}
+            aria-label="Back to Riser"
+          >
+            Back to Riser
+          </Button>
+        </div>
       </div>
     );
   }
@@ -400,48 +456,52 @@ export default function SchoolPaymentForm() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <FormField
-                    name="parentPrefix"
-                    control={control}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel required>Prefix</FormLabel>
-                        <FormControl>
-                          <select
-                            {...field}
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
-                          >
-                            <option value="">Select prefix</option>
-                            <option value="Mr">Mr</option>
-                            <option value="Mrs">Mrs</option>
-                            <option value="Miss">Miss</option>
-                            <option value="Ms">Ms</option>
-                          </select>
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
+                  <div className="grid sm:grid-cols-3 gap-4">
+                    <FormField
+                      name="parentPrefix"
+                      control={control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel required>Prefix</FormLabel>
+                          <FormControl>
+                            <select
+                              {...field}
+                              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+                            >
+                              <option value="">Select prefix</option>
+                              <option value="Mr">Mr</option>
+                              <option value="Mrs">Mrs</option>
+                              <option value="Miss">Miss</option>
+                              <option value="Ms">Ms</option>
+                            </select>
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
 
-                  <FormField
-                    name="parentFirstName"
-                    control={control}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel required>First Name</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Enter first name"
-                            aria-required="true"
-                            aria-invalid={
-                              !!form.formState.errors.parentFirstName
-                            }
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    <FormField
+                      name="parentFirstName"
+                      control={control}
+                      render={({ field }) => (
+                        <FormItem className="col-span-2">
+                          <FormLabel required>First Name</FormLabel>
+                          <FormControl>
+                            <Input
+                              className="col-span-2"
+                              placeholder="Enter first name"
+                              aria-required="true"
+                              aria-invalid={
+                                !!form.formState.errors.parentFirstName
+                              }
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
                   <FormField
                     name="parentLastName"
                     control={control}
@@ -537,7 +597,70 @@ export default function SchoolPaymentForm() {
                       </FormItem>
                     )}
                   />
+                  <FormField
+                    name="state_of_origin"
+                    control={control}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel required>State of Origin</FormLabel>
+                        <FormControl>
+                          <select
+                            {...field}
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+                            aria-required="true"
+                            aria-invalid={
+                              !!form.formState.errors.state_of_origin
+                            }
+                          >
+                            <option value="">Select state</option>
+                            {states.map((state) => (
+                              <option key={state} value={state}>
+                                {state}
+                              </option>
+                            ))}
+                          </select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    name="lga"
+                    control={control}
+                    render={({ field }) => {
+                      const selectedState = watch("state_of_origin");
+
+                      return (
+                        <FormItem>
+                          <FormLabel required>LGA</FormLabel>
+                          <FormControl>
+                            <select
+                              {...field}
+                              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+                              aria-required="true"
+                              aria-invalid={!!form.formState.errors.lga}
+                              disabled={!selectedState}
+                            >
+                              <option value="">
+                                {!selectedState
+                                  ? "Select state first"
+                                  : "Select LGA"}
+                              </option>
+                              {lgas.map((lga) => (
+                                <option key={lga} value={lga}>
+                                  {lga}
+                                </option>
+                              ))}
+                            </select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
+                  />
                 </div>
+
                 <FormField
                   name="address"
                   control={control}
@@ -651,6 +774,23 @@ export default function SchoolPaymentForm() {
 
                       <FormField
                         control={control}
+                        name={`students.${index}.middleName`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Middle Name (Optional)</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Enter middle name"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={control}
                         name={`students.${index}.dob`}
                         render={({ field }) => (
                           <FormItem>
@@ -678,7 +818,7 @@ export default function SchoolPaymentForm() {
                                         field.onChange(val);
                                         setShowCalendar("");
                                       }}
-                                      className="rounded-md border p-4 bg-white shadow-sm"
+                                      className="rounded-md border p-4 w-60 sm:w-72 bg-white shadow-sm"
                                       captionLayout="dropdown"
                                     />
                                   </div>
@@ -691,26 +831,17 @@ export default function SchoolPaymentForm() {
                       />
 
                       <FormField
-                        name="state_of_origin"
+                        name={`students.${index}.studentState`}
                         control={control}
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel required>State of Origin</FormLabel>
+                            <FormLabel>State of Origin</FormLabel>
                             <FormControl>
                               <select
                                 {...field}
                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
-                                aria-required="true"
-                                aria-invalid={
-                                  !!form.formState.errors.state_of_origin
-                                }
-                                disabled={isLoadingStates}
                               >
-                                <option value="">
-                                  {isLoadingStates
-                                    ? "Loading states..."
-                                    : "Select state"}
-                                </option>
+                                <option value="">Select state</option>
                                 {states.map((state) => (
                                   <option key={state} value={state}>
                                     {state}
@@ -719,40 +850,36 @@ export default function SchoolPaymentForm() {
                               </select>
                             </FormControl>
                             <FormMessage />
-                            {error && (
-                              <p className="text-sm text-red-500 mt-1">
-                                Failed to load states. Please try again.
-                              </p>
-                            )}
                           </FormItem>
                         )}
                       />
 
                       <FormField
-                        name="lga"
+                        name={`students.${index}.studentLga`}
                         control={control}
                         render={({ field }) => {
-                          const selectedState = watch("state_of_origin");
+                          const selectedStudentState = watch(
+                            `students.${index}.studentState`
+                          );
+                          const studentLgas = selectedStudentState
+                            ? getLGAsByState(selectedStudentState)
+                            : [];
 
                           return (
                             <FormItem>
-                              <FormLabel required>LGA</FormLabel>
+                              <FormLabel>LGA</FormLabel>
                               <FormControl>
                                 <select
                                   {...field}
                                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
-                                  aria-required="true"
-                                  aria-invalid={!!form.formState.errors.lga}
-                                  disabled={!selectedState || isLoadingLGAs}
+                                  disabled={!selectedStudentState}
                                 >
                                   <option value="">
-                                    {!selectedState
+                                    {!selectedStudentState
                                       ? "Select state first"
-                                      : isLoadingLGAs
-                                      ? "Loading LGAs..."
                                       : "Select LGA"}
                                   </option>
-                                  {lgas.map((lga) => (
+                                  {studentLgas.map((lga) => (
                                     <option key={lga} value={lga}>
                                       {lga}
                                     </option>
@@ -760,11 +887,6 @@ export default function SchoolPaymentForm() {
                                 </select>
                               </FormControl>
                               <FormMessage />
-                              {error && selectedState && (
-                                <p className="text-sm text-red-500 mt-1">
-                                  Failed to load LGAs. Please try again.
-                                </p>
-                              )}
                             </FormItem>
                           );
                         }}
@@ -828,6 +950,195 @@ export default function SchoolPaymentForm() {
                                   </option>
                                 ))}
                               </select>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={control}
+                        name={`students.${index}.studentType`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel required>Student Type</FormLabel>
+                            <FormControl>
+                              <select
+                                {...field}
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+                                aria-required="true"
+                              >
+                                <option value="">Select student type</option>
+                                <option value="returning">
+                                  Returning Student
+                                </option>
+                                <option value="new">New Student</option>
+                                <option value="transfer">
+                                  Transfer Student
+                                </option>
+                              </select>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      {watch(`students.${index}.studentType`) !==
+                        "returning" && (
+                        <>
+                          <FormField
+                            control={control}
+                            name={`students.${index}.previousSchool`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Previous School Attended</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    placeholder="Enter previous school name"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={control}
+                            name={`students.${index}.transferReason`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Reason for Transfer</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    placeholder="Please provide reason for transfer"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </>
+                      )}
+
+                      <div className="grid grid-cols-3 gap-4">
+                        <FormField
+                          control={control}
+                          name={`students.${index}.studentAddress`}
+                          render={({ field }) => {
+                            const sameAsParent = watch(
+                              `students.${index}.sameAsParent`
+                            );
+                            const parentAddress = watch("address");
+
+                            return (
+                              <FormItem className="col-span-2">
+                                <FormLabel>Student Address</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    placeholder="Enter student's home address"
+                                    value={
+                                      sameAsParent
+                                        ? parentAddress
+                                        : field.value || ""
+                                    }
+                                    onChange={field.onChange}
+                                    disabled={sameAsParent}
+                                    className={
+                                      sameAsParent ? "bg-gray-100" : ""
+                                    }
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            );
+                          }}
+                        />
+                        <FormField
+                          control={control}
+                          name={`students.${index}.sameAsParent`}
+                          render={({ field }) => (
+                            <FormItem className="flex mt-4 items-center space-x-3 space-y-0 rounded-md p-4">
+                              <FormControl>
+                                <input
+                                  type="checkbox"
+                                  checked={field.value}
+                                  onChange={field.onChange}
+                                  className="h-4 w-4 rounded border-gray-300"
+                                />
+                              </FormControl>
+                              <div className="space-y-1 leading-none">
+                                <FormLabel>Same as Parent Address</FormLabel>
+                              </div>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <FormField
+                        control={control}
+                        name={`students.${index}.allergies`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Allergies (Optional)</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="List any known allergies"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={control}
+                        name={`students.${index}.medicalConditions`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Medical Conditions (Optional)</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="List any medical conditions"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={control}
+                        name={`students.${index}.emergencyContactName`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Emergency Contact Name</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Enter emergency contact name (if different from parent)"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={control}
+                        name={`students.${index}.emergencyContactPhone`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Emergency Contact Phone</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="tel"
+                                placeholder="Enter emergency contact phone (if different from parent)"
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -938,15 +1249,17 @@ export default function SchoolPaymentForm() {
 
               {/* Additional Info */}
               <section>
-                <h3 className="mb-4 text-lg font-medium">
-                  Additional Information
-                </h3>
+                <div className="mb-4">
+                  <h3 className="text-lg font-medium">
+                    Additional Information
+                  </h3>
+                  <p>Any other information the school should be aware of</p>
+                </div>
                 <FormField
                   name="additionalInfo"
                   control={control}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Any special information?</FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder="Enter any additional information..."
@@ -958,6 +1271,57 @@ export default function SchoolPaymentForm() {
                   )}
                 />
               </section>
+            </div>
+
+            {/* Total Amount Summary */}
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mx-6 my-4">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                Payment Summary
+              </h3>
+              <div className="space-y-2">
+                {students.map((student, index) => {
+                  const studentTotal =
+                    student.fees?.reduce(
+                      (sum, fee) => sum + (fee.amount || 0),
+                      0
+                    ) || 0;
+                  const studentName =
+                    `${student.firstName || ""} ${
+                      student.middleName ? student.middleName + " " : ""
+                    }${student.lastName || ""}`.trim() ||
+                    `Student ${index + 1}`;
+
+                  return (
+                    <div
+                      key={student.firstName || index}
+                      className="flex justify-between items-center py-2 border-b border-gray-100"
+                    >
+                      <span className="text-gray-600">{studentName}</span>
+                      <span className="font-medium text-gray-800">
+                        ₦{studentTotal.toLocaleString()}
+                      </span>
+                    </div>
+                  );
+                })}
+
+                <div className="flex justify-between items-center pt-3 mt-2 border-t-2 border-gray-300">
+                  <span className="text-lg font-semibold text-gray-800">
+                    Total Amount:
+                  </span>
+                  <span className="text-xl font-bold text-blue-600">
+                    ₦{totalAmount.toLocaleString()}
+                  </span>
+                </div>
+              </div>
+
+              {feeTypeSummary && (
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <p className="text-sm text-gray-600">
+                    <span className="font-medium">Fee Types:</span>{" "}
+                    {feeTypeSummary}
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mx-6 my-6 rounded">

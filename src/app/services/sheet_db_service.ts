@@ -37,10 +37,20 @@ export interface EnrollmentData {
   // Student and Fee Data (JSON arrays)
   students?: Array<{
     firstName: string;
+    middleName?: string;
     lastName: string;
     dob: string;
     gender: string;
     gradeLevel: string;
+    studentId?: string;
+    studentAddress?: string;
+    sameAsParent?: boolean;
+    previousSchool?: string;
+    transferReason?: string;
+    allergies?: string;
+    medicalConditions?: string;
+    emergencyContactName?: string;
+    emergencyContactPhone?: string;
     fees: Array<{
       type: string;
       amount: number;
