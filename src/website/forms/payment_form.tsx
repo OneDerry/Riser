@@ -369,9 +369,8 @@ export default function SchoolPaymentForm() {
             </p>
           )}
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center mt-6 justify-between">
           <Button
-            className="mt-6"
             onClick={() => {
               setIsSuccess(false);
               setPaymentReference(null);
@@ -382,7 +381,6 @@ export default function SchoolPaymentForm() {
             Make Another Payment
           </Button>
           <Button
-            className="mt-6"
             onClick={() => {
               setIsSuccess(false);
               setPaymentReference(null);
