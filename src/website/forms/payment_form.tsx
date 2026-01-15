@@ -1,5 +1,5 @@
-import { useState, useEffect, type Dispatch, type SetStateAction } from "react";
-import { useForm, useFieldArray, type Control } from "react-hook-form";
+import { useState, useEffect } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import {
@@ -24,144 +24,10 @@ import { usePaystackCheckout } from "../../paystack/use_paystack_checkout";
 import { useSubmitEnrollmentMutation } from "../../app/features/payments.api";
 import { EnrollmentData } from "../../app/services/sheet_db_service";
 import { toast } from "sonner";
-import { formatCurrency, parseCurrency } from "../../lib/helpers";
 import { useNigeriaStates } from "../../hooks/use_nigeria_states";
+import StudentFeesSection from "./studentFeesSection";
 
 const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || "";
-
-function StudentFeesSection({
-  studentIndex,
-  control,
-  feeTypes,
-  formattedAmounts,
-  setFormattedAmounts,
-}: {
-  studentIndex: number;
-  control: Control<FormValues>;
-  feeTypes: Array<{ name: string }>;
-  formattedAmounts: Record<string, string>;
-  setFormattedAmounts: Dispatch<SetStateAction<Record<string, string>>>;
-}) {
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: `students.${studentIndex}.fees`,
-  });
-
-  const addFee = () => {
-    append({ type: "", amount: 0 });
-  };
-
-  const removeFee = (feeIndex: number) => {
-    if (fields.length > 1) {
-      remove(feeIndex);
-    }
-  };
-
-  return (
-    <div className="mt-4">
-      {fields.map((feeField, feeIndex) => {
-        const formattedKey = `${studentIndex}-${feeField.id}`;
-        return (
-          <div
-            key={feeField.id}
-            className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-12"
-          >
-            <div className="sm:col-span-5">
-              <FormField
-                control={control}
-                name={`students.${studentIndex}.fees.${feeIndex}.type`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel required={feeIndex === 0}>Fee Type</FormLabel>
-                    <FormControl>
-                      <select
-                        {...field}
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
-                      >
-                        <option value="">Select fee type</option>
-                        {feeTypes.map((fee) => (
-                          <option key={fee.name} value={fee.name}>
-                            {fee.name}
-                          </option>
-                        ))}
-                      </select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="sm:col-span-5">
-              <FormField
-                control={control}
-                name={`students.${studentIndex}.fees.${feeIndex}.amount`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel required={feeIndex === 0}>Amount (₦)</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="text"
-                        placeholder="Enter amount (e.g., N1,000)"
-                        value={formattedAmounts[formattedKey] || ""}
-                        onChange={(e) => {
-                          const inputValue = e.target.value;
-                          setFormattedAmounts((prev) => ({
-                            ...prev,
-                            [formattedKey]: inputValue,
-                          }));
-                          const numericValue = parseCurrency(inputValue);
-                          field.onChange(numericValue);
-                        }}
-                        onBlur={() => {
-                          const numericValue = parseCurrency(
-                            formattedAmounts[formattedKey] || "0"
-                          );
-                          if (numericValue > 0) {
-                            const formatted = formatCurrency(numericValue);
-                            setFormattedAmounts((prev) => ({
-                              ...prev,
-                              [formattedKey]: formatted,
-                            }));
-                          }
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="flex items-end sm:col-span-2">
-              {feeIndex === 0 ? (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={addFee}
-                  className="w-full bg-blue-800 text-white mt-4 sm:mt-0"
-                >
-                  Add Fee
-                </Button>
-              ) : (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="text-red-500"
-                  onClick={() => removeFee(feeIndex)}
-                >
-                  Remove
-                </Button>
-              )}
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
 
 export default function SchoolPaymentForm() {
   const navigate = useNavigate();
