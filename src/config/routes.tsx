@@ -5,7 +5,7 @@ import { RouteObject } from "react-router-dom";
 import Baselayout from "../shared/layout/base_layout";
 import { Loading } from "../shared/components/loaders";
 import PaystackPayment from "../paystack/paystack_payment";
-import SchoolPaymentForm from "../website/forms/payment_form";
+import SchoolPaymentFormSimplified from "../website/forms/payment_form_simplified";
 
 const Home = lazy(() => import("../website/home"));
 const EnrollmentPage = lazy(() => import("../website/enroll_page"));
@@ -36,7 +36,7 @@ export default function appRouter(): RouteObject[] {
         },
         {
           path: "/form",
-          element: <SchoolPaymentForm />,
+          element: <SchoolPaymentFormSimplified />,
         },
         {
           path: "/faq",

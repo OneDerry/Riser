@@ -30,7 +30,7 @@ const Navbar = () => {
   const navItems: TnavbarItems[] = [
     { url: "/", name: "Home" },
     { url: "/#about", name: "About us" },
-    { url: "/#admission", name: "Admission" },
+    { url: "/admissions-info", name: "Admission" },
     { url: "/#gallery", name: "Gallery" },
     { url: "/#contacts", name: "Contacts" },
     { url: "/form", name: "Enroll" },
@@ -129,8 +129,16 @@ const Navbar = () => {
                   "text-sm font-normal capitalize transition-colors hover:text-primary cursor-pointer",
                   buttonVariants({ variant: "linkHover2" }),
                   {
-                    "text-primary": isActive || (location.hash === `#${item.url.split('#')[1]}` && item.url.includes('#')),
-                    "text-foreground hover:text-primary": !isActive && !(location.hash === `#${item.url.split('#')[1]}` && item.url.includes('#'))
+                    "text-primary":
+                      isActive ||
+                      (location.hash === `#${item.url.split("#")[1]}` &&
+                        item.url.includes("#")),
+                    "text-foreground hover:text-primary":
+                      !isActive &&
+                      !(
+                        location.hash === `#${item.url.split("#")[1]}` &&
+                        item.url.includes("#")
+                      ),
                   }
                 )
               }
