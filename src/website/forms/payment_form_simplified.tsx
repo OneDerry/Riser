@@ -98,6 +98,69 @@ export default function SchoolPaymentFormSimplified() {
   const { control, handleSubmit, reset, watch, setValue } = form;
   const [submitEnrollment] = useSubmitEnrollmentMutation();
 
+  // Form persistence logic
+  const STORAGE_KEY = "riser_enrollment_form_data";
+
+  const saveFormData = (data: FormValues) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (error) {
+      console.warn("Failed to save form data:", error);
+    }
+  };
+
+  const loadFormData = (): Partial<FormValues> | null => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      return stored ? JSON.parse(stored) : null;
+    } catch (error) {
+      console.warn("Failed to load form data:", error);
+      return null;
+    }
+  };
+
+  const clearFormData = () => {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (error) {
+      console.warn("Failed to clear form data:", error);
+    }
+  };
+
+  // Save form data whenever it changes
+  useEffect(() => {
+    if (!isSubmitting && !isSuccess) {
+      saveFormData(form.getValues());
+    }
+  }, [form.getValues(), isSubmitting, isSuccess]);
+
+  // Load saved data on mount
+  useEffect(() => {
+    const savedData = loadFormData();
+    if (savedData) {
+      // Check if form is empty
+      const currentValues = form.getValues();
+      const isEmpty = Object.values(currentValues).every(
+        (value) =>
+          value === "" ||
+          value === null ||
+          (Array.isArray(value) && value.length === 0) ||
+          (typeof value === "object" && Object.keys(value).length === 0)
+      );
+
+      if (isEmpty) {
+        form.reset({ ...currentValues, ...savedData });
+      }
+    }
+  }, []); // Only run once on mount
+
+  // Clear storage after successful submission
+  useEffect(() => {
+    if (isSuccess) {
+      clearFormData();
+    }
+  }, [isSuccess]);
+
   // Use custom hook for calculations
   const {
     totalAmount,
@@ -701,6 +764,18 @@ export default function SchoolPaymentFormSimplified() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-between border-t bg-slate-50 p-6">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  clearFormData();
+                  reset();
+                  setShowCalendar(null);
+                  setErrorMessage(null);
+                }}
+              >
+                Clear Saved Data
+              </Button>
               <Button
                 type="button"
                 variant="outline"

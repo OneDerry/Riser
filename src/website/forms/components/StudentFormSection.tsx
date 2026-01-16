@@ -171,6 +171,38 @@ export default function StudentFormSection({
             />
           </>
         )}
+        <FormInput
+          control={control}
+          name={`students.${index}.medicalConditions`}
+          label="Medical Conditions (Optional)"
+          placeholder="List any medical conditions"
+        />
+
+        <FormInput
+          control={control}
+          name={`students.${index}.allergies`}
+          label="Allergies (Optional)"
+          placeholder="List any known allergies"
+        />
+
+        <div>
+          <FormInput
+            control={control}
+            name={`students.${index}.emergencyContactName`}
+            label="Emergency Contact Name"
+            placeholder="Enter name (if different from parent)"
+          />
+        </div>
+
+        <div>
+          <FormInput
+            control={control}
+            name={`students.${index}.emergencyContactPhone`}
+            label="Emergency Contact Phone"
+            type="tel"
+            placeholder="Enter phone (if different from parent)"
+          />
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:col-span-2">
           <div className="sm:col-span-2">
@@ -188,38 +220,6 @@ export default function StudentFormSection({
             name={`students.${index}.sameAsParent`}
             label="Same as Parent Address"
             className="sm:mt-4"
-          />
-        </div>
-
-        <FormInput
-          control={control}
-          name={`students.${index}.allergies`}
-          label="Allergies (Optional)"
-          placeholder="List any known allergies"
-        />
-
-        <FormInput
-          control={control}
-          name={`students.${index}.medicalConditions`}
-          label="Medical Conditions (Optional)"
-          placeholder="List any medical conditions"
-        />
-        <div>
-          <FormInput
-            control={control}
-            name={`students.${index}.emergencyContactName`}
-            label="Emergency Contact Name"
-            placeholder="Enter name (if different from parent)"
-          />
-        </div>
-
-        <div>
-          <FormInput
-            control={control}
-            name={`students.${index}.emergencyContactPhone`}
-            label="Emergency Contact Phone"
-            type="tel"
-            placeholder="Enter phone (if different from parent)"
           />
         </div>
       </div>

@@ -77,13 +77,13 @@ export const Hero = () => {
                   <Button
                     onClick={() => navigate("/enroll")}
                     variant="default"
-                    className="bg-blue-800 hover:bg-blue-700 border-blue-700 border w-full text-white text-sm group flex items-center justify-center p-3 rounded-md"
+                    className="bg-blue-800 h-14 hover:bg-blue-700 border-blue-700 border w-full text-white text-sm group flex items-center justify-center p-3 rounded-md"
                   >
                     Enroll
                     <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                   </Button>
 
-                <Button className="border-white/30 border border-blue-700 w-full text-white text-sm hover:bg-white/10 backdrop-blur-sm flex items-center justify-center p-3 rounded-md">
+                <Button className="border-white/30 h-14 border border-blue-700 w-full text-white text-sm hover:bg-white/10 backdrop-blur-sm flex items-center justify-center p-3 rounded-md">
                   Explore Programs
                 </Button>
               </div>
