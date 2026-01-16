@@ -105,7 +105,7 @@ const Footer = () => {
             <h3 className="font-bold text-slate-300 text-lg mb-4 border-b border-slate-200 pb-2">
               Contact Us
             </h3>
-            <ul className="space-y-4">
+            <ul className="space-y-4 text-slate-300">
               <li className="flex items-start">
                 <Mail className="h-5 w-5 text-primary mr-3 mt-0.5 flex-shrink-0" />
                 <span className="text-slate-300 text-sm">
