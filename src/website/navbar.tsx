@@ -56,6 +56,7 @@ const Navbar = () => {
 
   return (
     <motion.nav
+      onClick={toggleMenu}
       className={cn(
         "fixed top-0 left-0 w-full text-white z-50 transition-all duration-300",
         scrolled
@@ -154,7 +155,7 @@ const Navbar = () => {
 
       {/* Mobile Menu (Conditional Rendering) */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white/90 backdrop-blur-sm py-4">
+        <div className="md:hidden bg-black/20 backdrop-blur-sm py-4">
           <div className="container mx-auto px-4 flex flex-col space-y-4">
             {navItems.map((item) => (
               <NavLink

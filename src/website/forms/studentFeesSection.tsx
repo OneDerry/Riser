@@ -39,9 +39,9 @@ export default function StudentFeesSection({
         return (
           <div
             key={feeField.id}
-            className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-12"
+            className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3"
           >
-            <div className="sm:col-span-5">
+            <div className="">
               <FormField
                 control={control}
                 name={`students.${studentIndex}.fees.${feeIndex}.type`}
@@ -67,7 +67,7 @@ export default function StudentFeesSection({
               />
             </div>
 
-            <div className="sm:col-span-5">
+            <div className="">
               <FormField
                 control={control}
                 name={`students.${studentIndex}.fees.${feeIndex}.amount`}
@@ -77,6 +77,7 @@ export default function StudentFeesSection({
                     <FormControl>
                       <Input
                         type="text"
+                        className="h-10"
                         placeholder="Enter amount (e.g., N1,000)"
                         value={formattedAmounts[formattedKey] || ""}
                         onChange={(e) => {
@@ -108,14 +109,14 @@ export default function StudentFeesSection({
               />
             </div>
 
-            <div className="flex items-end sm:col-span-2">
+            <div className="flex items-end ">
               {feeIndex === 0 ? (
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   onClick={addFee}
-                  className="w-full bg-blue-800 text-white mt-4 sm:mt-0"
+                  className="w-full h-10 bg-blue-800 text-white mt-4 sm:mt-0"
                 >
                   Add Fee
                 </Button>

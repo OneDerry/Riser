@@ -361,7 +361,7 @@ export default function SchoolPaymentFormSimplified() {
   return (
     <div
       style={{ backgroundImage: `url(${background})` }}
-      className="relative min-h-screen bg-cover bg-center bg-no-repeat px-6 sm:px-72 py-12"
+      className="relative min-h-screen bg-cover bg-center bg-no-repeat px-2  py-12"
     >
       <div className="absolute inset-0 bg-black/30 z-0" />
 
@@ -417,23 +417,27 @@ export default function SchoolPaymentFormSimplified() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <div className="grid sm:grid-cols-3 gap-4">
-                    <FormSelect
-                      control={control}
-                      name="parentPrefix"
-                      label="Prefix"
-                      options={PREFIX_OPTIONS}
-                      required
-                    />
-
-                    <FormInput
-                      control={control}
-                      name="parentFirstName"
-                      label="First Name"
-                      placeholder="Enter first name"
-                      required
-                      className="col-span-2 w-full"
-                    />
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                      <FormSelect
+                        control={control}
+                        name="parentPrefix"
+                        label="Prefix"
+                        options={PREFIX_OPTIONS}
+                        required
+                        className="w-full"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <FormInput
+                        control={control}
+                        name="parentFirstName"
+                        label="First Name"
+                        placeholder="Enter first name"
+                        required
+                        className=" w-full"
+                      />
+                    </div>
                   </div>
 
                   <FormInput
@@ -514,7 +518,7 @@ export default function SchoolPaymentFormSimplified() {
 
               {/* Student Info */}
               <section>
-                <div className="mb-4 sm:flex items-center justify-between">
+                <div className="mb-4 md:flex items-center justify-between">
                   <div>
                     <h2 id="student-info-heading" className="text-lg font-bold">
                       Student Information
@@ -530,7 +534,7 @@ export default function SchoolPaymentFormSimplified() {
                     size="sm"
                     onClick={addStudent}
                     aria-label="Add another student"
-                    className="bg-blue-800 text-white mt-4 sm:mt-0"
+                    className="bg-blue-800 text-white mt-4 md:mt-0"
                   >
                     + Add Another Student
                   </Button>
