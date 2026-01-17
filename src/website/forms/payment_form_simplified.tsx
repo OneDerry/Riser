@@ -763,19 +763,7 @@ export default function SchoolPaymentFormSimplified() {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-between border-t bg-slate-50 p-6">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  clearFormData();
-                  reset();
-                  setShowCalendar(null);
-                  setErrorMessage(null);
-                }}
-              >
-                Clear Saved Data
-              </Button>
+            <div className="flex flex-col md:flex-row gap-4 justify-between border-t bg-slate-50 p-6">
               <Button
                 type="button"
                 variant="outline"
